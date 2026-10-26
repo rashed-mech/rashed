@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.env
+.env.local
+data/portfolio.local.json
+data/portfolio.local.json.tmp
+.reference/

@@ -1,0 +1,8 @@
+{
+  "name": "New",
+  "description": "Portfolio and research website for Rashedul Islam, specializing in off-grid hybrid renewable energy systems, solar, wind, biogas, and battery storage for coastal communities in Bangladesh.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

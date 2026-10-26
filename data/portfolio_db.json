@@ -1,0 +1,904 @@
+{
+  "themeUX": {
+    "fontContrast": "pure-black",
+    "ambientGlow": true,
+    "cardRadius": "rounded-2xl",
+    "activeDesign": "design-5",
+    "designPreset": "modern-executive"
+  },
+  "publications": [
+    {
+      "isVisible": true,
+      "methods_used": [],
+      "key_findings": [],
+      "abstract": "Atomistic molecular dynamics simulation investigating stress-strain relationships, thermal conductivity variations, and crack propagation fracture mechanics in pristine and doped monolayer graphene.",
+      "doi": "",
+      "title": "Comparative Molecular Dynamics Study of Mechanical, Thermal, and Fracture Behavior in Ti, Si, and Ti-Si-Doped Monolayer Graphene",
+      "citations": 0,
+      "bibtex": "",
+      "year": 2025,
+      "authors": "Rashedul Islam et al.",
+      "purpose": "",
+      "category": "Submitted",
+      "id": "pub-1788592390706-19",
+      "statusNote": "Submitted",
+      "featured": false,
+      "pdfUrl": "",
+      "venue": "Submitted",
+      "tags": [
+        "Molecular Dynamics",
+        "Monolayer Graphene",
+        "Material Science",
+        "Fracture Mechanics",
+        "Thermal Behavior"
+      ],
+      "link": ""
+    },
+    {
+      "tags": [
+        "Dynamical Systems",
+        "Perron-Frobenius",
+        "Chaotic Logistic Map",
+        "Equilibrium Convergence",
+        "Mathematical Modeling"
+      ],
+      "title": "Exact Perron-Frobenius Orbits and Quantitative Convergence to Equilibrium for the Fully Chaotic Logistic Map",
+      "link": "https://track.authorhub.elsevier.com/?uuid=7ea1126e-7496-42e7-a82b-cd090c5a12d0",
+      "isVisible": true,
+      "doi": "",
+      "bibtex": "",
+      "category": "Under Review",
+      "statusNote": "Under Review",
+      "citations": 0,
+      "featured": false,
+      "purpose": "",
+      "authors": "Rashedul Islam et al.",
+      "id": "pub-1788592390662-13",
+      "year": 2025,
+      "venue": "Under Review",
+      "pdfUrl": "",
+      "abstract": "Analytical and numerical study establishing exact Perron-Frobenius transfer operator orbits and quantitative convergence rates towards invariant equilibrium measures in fully chaotic logistic map dynamics.",
+      "key_findings": [],
+      "methods_used": []
+    },
+    {
+      "purpose": "",
+      "authors": "Rashedul Islam et al.",
+      "year": 2025,
+      "bibtex": "",
+      "isVisible": true,
+      "statusNote": "Under Review",
+      "title": "Computational Thermo-Hydraulic Performance Evaluation of a Shell and Tube Heat Exchanger Using Concave Triangular Ribs",
+      "id": "pub-1788592211520-676",
+      "doi": "",
+      "abstract": "Numerical investigation of fluid flow dynamics, heat transfer enhancement, and friction factor penalties in a shell and tube heat exchanger equipped with concave triangular turbulator ribs.",
+      "citations": 0,
+      "link": "https://track.authorhub.elsevier.com/?uuid=89334d7d-438f-43d9-b439-32baef5706ab",
+      "tags": [
+        "Heat Exchanger",
+        "Thermo-Hydraulic",
+        "ANSYS Fluent",
+        "CFD Simulation",
+        "Heat Transfer Enhancement"
+      ],
+      "venue": "Under Review",
+      "pdfUrl": "",
+      "featured": false,
+      "key_findings": [],
+      "methods_used": [],
+      "category": "Under Review"
+    },
+    {
+      "abstract": "Techno-economic and environmental optimization of an advanced hybrid renewable energy system with green hydrogen production designed for off-grid coastal community electrification in Bangladesh.",
+      "bibtex": "@article{islam2026techno,\n  title={Techno-Economic and Environmental Optimization of Advanced Hybrid Renewable Energy Systems with Green Hydrogen Production for Off-Grid Coastal Community Electrification in Bangladesh},\n  author={Islam, R. and Ahmed, M. R. and Sayem, S. I.},\n  journal={Energy Conversion and Management: X},\n  pages={102179},\n  year={2026},\n  publisher={Elsevier},\n  doi={10.1016/j.ecmx.2026.102179}\n}",
+      "venue": "Energy Conversion and Management: X, p. 102179",
+      "year": 2026,
+      "doi": "10.1016/j.ecmx.2026.102179",
+      "id": "pub-1",
+      "category": "Journal",
+      "tags": [
+        "Hybrid Renewable Energy",
+        "Green Hydrogen",
+        "HOMER Pro",
+        "Off-Grid Electrification",
+        "Coastal Bangladesh"
+      ],
+      "title": "Techno-Economic and Environmental Optimization of Advanced Hybrid Renewable Energy Systems with Green Hydrogen Production for Off-Grid Coastal Community Electrification in Bangladesh",
+      "citations": 0,
+      "featured": true,
+      "link": "https://doi.org/10.1016/j.ecmx.2026.102179",
+      "authors": "R. Islam, M. R. Ahmed, and S. I. Sayem"
+    },
+    {
+      "venue": "Discover Electronics 2 (1), 81, 2025",
+      "citations": 9,
+      "year": 2025,
+      "abstract": "Comparative techno-economic investigation and energy yield assessment of a solar Photovoltaic (PV) system utilizing PVsyst, HOMER, and RETscreen software models for Bangladesh climate conditions.",
+      "authors": "S. M. Saklain Mostak Saumik, Naimur Rahman, Md Abdullah Al Noman, Rashedul ...",
+      "title": "Techno-economic investigation of a solar Photovoltaic (PV) energy model using PVsyst, Homer, RETscreen: a case study in Bangladesh",
+      "link": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=lCyuApIAAAAJ&pagesize=100&citation_for_view=lCyuApIAAAAJ:9yKSN-GCB0IC",
+      "tags": [
+        "Solar PV",
+        "PVsyst",
+        "HOMER",
+        "RETScreen",
+        "Techno-Economic Analysis"
+      ],
+      "bibtex": "@article{scholar_2025_Techno_eco,\n  title = {Techno-economic investigation of a solar Photovoltaic (PV) energy model using PVsyst, Homer, RETscreen: a case study in Bangladesh},\n  author = {S. M. Saklain Mostak Saumik, Naimur Rahman, Md Abdullah Al Noman, Rashedul ...},\n  journal = {Discover Electronics 2 (1), 81, 2025},\n  year = {2025}\n}",
+      "doi": "10.1007/s44291-025-00119-1",
+      "category": "Journal",
+      "id": "pub-2",
+      "featured": false
+    },
+    {
+      "bibtex": "@article{scholar_2025_Performanc,\n  title = {Performance and emission analysis of hydrogen and conventional fuels in PFI SI engines using CONVERGE 3.0},\n  author = {R Islam, SMA Rahman, MR Islam, MR Islam, MR Ahmed, MRI Sarker},\n  journal = {Next Energy 9, 100404, 2025},\n  year = {2025}\n}",
+      "citations": 5,
+      "doi": "10.1016/j.nxener.2025.100404",
+      "link": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=lCyuApIAAAAJ&pagesize=100&citation_for_view=lCyuApIAAAAJ:d1gkVwhDpl0C",
+      "abstract": "Comprehensive 3D CFD combustion simulation, thermal efficiency assessment, and emission characterization comparing pure hydrogen against conventional fuels in port fuel injection spark ignition engines using CONVERGE 3.0.",
+      "title": "Performance and emission analysis of hydrogen and conventional fuels in PFI SI engines using CONVERGE 3.0",
+      "tags": [
+        "Hydrogen Fuel",
+        "CONVERGE 3.0",
+        "PFI SI Engine",
+        "Combustion Modeling",
+        "Emissions Reduction"
+      ],
+      "authors": "R Islam, SMA Rahman, MR Islam, MR Islam, MR Ahmed, MRI Sarker",
+      "featured": false,
+      "venue": "Next Energy 9, 100404, 2025",
+      "category": "Journal",
+      "id": "pub-3",
+      "year": 2025
+    }
+  ],
+  "projects": [
+    {
+      "technologies": [
+        "SolidWorks",
+        "CAD Modeling",
+        "Kinematic Analysis",
+        "Rendering & Animation"
+      ],
+      "githubUrl": "",
+      "images": [
+        "https://drive.google.com/file/d/1wfMCWA_3X3NqUx3RU1jG4ov7oXbIiOwX/view?usp=sharing "
+      ],
+      "date": "2022",
+      "liveUrl": "",
+      "category": "Undergraduate Project",
+      "description": "The goal of this project is to design and build an affordable solution to the mobility issues faced by those with physical limitations.",
+      "imageUrl": "https://drive.google.com/file/d/1QebJ9WOID0GL-lH92WFUxPU3sfqWxTaw/view?usp=sharing ",
+      "id": "proj-1",
+      "title": "Electro-Mechanical Wheel Chair",
+      "featured": true,
+      "fullDescription": "Utilized SolidWorks for designing CAD models Pro to render images and animations."
+    },
+    {
+      "id": "proj-2",
+      "featured": true,
+      "technologies": [
+        "Mechanical Design",
+        "Gear Ratio Optimization (6:1)",
+        "Coaxial Transmission",
+        "CAD"
+      ],
+      "fullDescription": "Designed for improved power transmission efficiency, optimized gear mesh ratios, and fuel economy.",
+      "date": "2020",
+      "description": "Used in coaxial input and output, more accuracy, high torque and high gear (6:1) ratio.",
+      "title": "Five speed Gear Box Mechanism with High rpm, high gear ratio and Fuel efficiency",
+      "category": "Undergraduate Project"
+    }
+  ],
+  "experience": [
+    {
+      "department": "Mechanical Engineering",
+      "supervisors": "[Md. Rasel Ahmed](https://www.ruet.ac.bd/raselahmedruet13)",
+      "highlights": [
+        "Data collection: Visited Wind Turbine Powerplant at Cox’s Bazar and collected the data for the study.",
+        "Model development and validation: Biogas Generator, solar panel and wind turbine arranges the best outcome.",
+        "Analysis and writing: Analyzed the off-grid power cases using HOMER Pro and plotted the results."
+      ],
+      "paperLink": "",
+      "description": "As a Research Assistant in the Department of Mechanical Engineering at Hajee Mohammad Danesh Science and Technology University (HSTU) and Rajshahi University of Engineering Technology (RUET), I have worked under the mentorship of Md. Rasel Ahmed on multidisciplinary research spanning combustion engineering, hybrid renewable energy systems, and solar photovoltaic technologies. My work combines high-fidelity numerical simulation with techno-economic and environmental analysis to support cleaner, more efficient energy systems for Bangladesh and similar developing regions.\n\nI contributed to a 3-dimensional CFD study using CONVERGE 3.0 and the SAGE detailed-chemistry combustion solver to compare the in-cylinder performance and emissions of hydrogen against gasoline, methane, and M10 in a port-fuel-injected spark-ignition engine, identifying operating conditions that maximize thermal efficiency while minimizing pollutant formation. I also worked on a HOMER Pro-based techno-economic and environmental optimization of six advanced hybrid renewable energy configurations- combining wind, solar PV, biogas, diesel, battery storage, and green-hydrogen electrolysis- for off-grid coastal electrification, supported by Monte Carlo uncertainty analysis and NSGA-II multi-objective optimization. In a related study, I helped benchmark PVsyst, HOMER Pro, and RETScreen for a standalone solar PV system, comparing their technical, financial, and emissions outputs to identify the most reliable design approach for off-grid island communities.\n\nThese projects have been published in peer-reviewed journals, including Next Energy, Energy Conversion and Management: X, and Discover Electronics. Building on this foundation, I am now extending my research into next-generation photovoltaics- designing and numerically simulating a lead-free, double-absorber perovskite solar cell optimized electron transport layers, aimed at improving power conversion efficiency while addressing the toxicity concerns of conventional lead-based perovskites.",
+      "period": "Aug 2024- On going",
+      "employmentType": "Full Time",
+      "location": "Dinajpur, Bangladesh\nKazla, Rajshahi, Bangladesh",
+      "role": "Research Assistant (RA)",
+      "organization": "Hajee Mohammad Danesh Science and Technology University  (HSTU)\nRajshahi University of Engineering & Technology (RUET)",
+      "id": "exp-1788090880989-916",
+      "current": false
+    },
+    {
+      "period": "Jan 2025 – May 2025",
+      "location": "Dhaka, Bangladesh",
+      "id": "exp-1",
+      "highlights": [
+        "Assessed mechanical systems and completed product optimization resulting in reduced material waste and improved operational efficiency.",
+        "Participated in structured training sessions on technical operations, maintenance procedures, and quality standards.",
+        "Gained practical exposure to maintenance scheduling, equipment inspection, and corrective action follow-up in a field environment."
+      ],
+      "description": "Mechanical systems assessment, product optimization, and maintenance operations.",
+      "current": false,
+      "organization": "Placid Bangladesh (Intern)",
+      "role": "Mechanical Engineering Intern"
+    }
+  ],
+  "education": [
+    {
+      "advisor": "[Md. Rasel Ahmed](https://www.ruet.ac.bd/raselahmedruet13)",
+      "thesis": "Investigate the Performance of Hydrogen Fuel and Compare with Conventional Fuels in Port Fuel Injection SI Engine using CONVERGE CFD. (Research paper was published in a Q1 Journal- Next Energy, 2025)",
+      "department": "",
+      "id": "edu-1",
+      "result": "CGPA: 3.363 / 4.00",
+      "degree": "B.Sc. in Mechanical Engineering",
+      "location": "Dinajpur, Bangladesh",
+      "year": "Jan 2019 – Dec 2022",
+      "institution": "Hajee Mohammad Danesh Science & Technology University (HSTU)",
+      "synopsis": "This dissertation presents the exciting frontier of hydrogen as a clean, high-efficiency fuel in spark-ignition engines, using advanced Converge CFD simulations to compare it against conventional fuels like gasoline, methane, and M10. Through a series of simulated combustion trials, hydrogen proves itself not just as a viable alternative but a standout performer-delivering smoother cylinder pressures, higher thermal efficiency, and near-zero emissions at optimal conditions. Particularly at an equivalence ratio of 0.4 and 3000 rpm, hydrogen showcases its potential to power the future of transportation with minimal environmental impact. The research boldly positions hydrogen as a clean-energy champion ready to replace carbon-heavy fuels in a world urgently seeking sustainability.",
+      "coursework": "Power Plant Engineering, Thermodynamics, Fluid Mechanics, Electrical Machines, Engineering Design, Heat Transfer, Renewable Energy Systems."
+    }
+  ],
+  "skillGroups": [
+    {
+      "id": "sg-5",
+      "description": "Computational fluid dynamics, multiphysics simulation, and mechanical design across industry-standard CFD and CAD platforms.",
+      "skills": [
+        {
+          "id": "sk-dmkea22y8",
+          "level": 80,
+          "name": "CONVERGE CFD",
+          "highlight": true
+        },
+        {
+          "name": "COMSOL Multiphysics",
+          "level": 70,
+          "highlight": true,
+          "id": "sk-oqf8eyqw1"
+        },
+        {
+          "level": 70,
+          "name": "SolidWorks",
+          "highlight": true,
+          "id": "sk-0oe1cq5g3"
+        },
+        {
+          "level": 80,
+          "name": "AutoCAD",
+          "highlight": true,
+          "id": "sk-0dix1fofx"
+        },
+        {
+          "highlight": true,
+          "level": 65,
+          "name": "Solid Edge",
+          "id": "sk-gy3ws1jb4"
+        }
+      ],
+      "category": "CFD, Simulation & CAD Tools"
+    },
+    {
+      "skills": [
+        {
+          "name": "HOMER Pro",
+          "level": 95,
+          "highlight": true,
+          "id": "sk-1cqkrr1tx"
+        },
+        {
+          "level": 95,
+          "name": "PVsyst",
+          "id": "sk-2v4e0hulr",
+          "highlight": true
+        },
+        {
+          "id": "sk-fpm0c3z9l",
+          "level": 90,
+          "highlight": true,
+          "name": "RETscreen"
+        },
+        {
+          "id": "sk-przhloj7y",
+          "name": "Decision Science, Hybrid System Design & Optimization (NSGA-II)",
+          "highlight": true
+        },
+        {
+          "name": "LCOE / NPC / LCOH Analysis",
+          "highlight": true,
+          "id": "sk-g9zpq2pym"
+        },
+        {
+          "highlight": true,
+          "name": "Load Assessment, LCA & Uncertainty Analysis (Montecarlo)",
+          "id": "sk-23njf3txm"
+        }
+      ],
+      "category": "Energy Modelling & Analysis",
+      "description": "Techno-economic modelling and optimization of renewable and hybrid energy systems, from feasibility through uncertainty analysis",
+      "id": "sg-1"
+    },
+    {
+      "description": "Molecular dynamics simulation and atomistic-scale analysis of material structure and mechanical behavior.",
+      "category": "Atomistics & Molecular Dynamics",
+      "skills": [
+        {
+          "id": "sk-nr994rx67",
+          "highlight": true,
+          "name": "LAMMPS"
+        },
+        {
+          "name": "OVITO",
+          "id": "sk-lbq1igf4m",
+          "highlight": true
+        }
+      ],
+      "id": "sg-2"
+    },
+    {
+      "id": "sg-4",
+      "description": "Technical reporting, system diagramming, and field documentation, paired with hands-on training and technician coaching.",
+      "skills": [
+        {
+          "name": "Energy Performance Reports (MS Office and Latex)",
+          "level": 95,
+          "highlight": true,
+          "id": "sk-gtjturowo"
+        },
+        {
+          "highlight": true,
+          "name": "System Diagrams",
+          "id": "sk-b95zg4jqf"
+        },
+        {
+          "highlight": true,
+          "id": "sk-c2rmgech2",
+          "name": "Maintenance Records & Feasibility Studies"
+        },
+        {
+          "id": "sk-2mr9vb57c",
+          "highlight": true,
+          "name": "Power Assessments"
+        },
+        {
+          "highlight": true,
+          "name": "Training & Technician Coaching",
+          "id": "sk-vqar83ahz"
+        },
+        {
+          "name": "Hands-on Field Instruction",
+          "id": "sk-qyn4j6479",
+          "highlight": true
+        }
+      ],
+      "category": "Technical Documentation & Capacity Building"
+    },
+    {
+      "description": "Electrical system assessment, preventive and corrective maintenance, and field safety compliance.",
+      "skills": [
+        {
+          "id": "sk-xip5jvc58",
+          "highlight": true,
+          "name": "Electrical Installation Assessment"
+        },
+        {
+          "id": "sk-4xer2oehy",
+          "highlight": true,
+          "name": "Preventive & Corrective Maintenance"
+        },
+        {
+          "name": "Safety Compliance",
+          "id": "sk-d5bn0zj0r",
+          "highlight": true
+        }
+      ],
+      "id": "sg-3",
+      "category": "Electrical & Maintenance"
+    },
+    {
+      "id": "sg-6",
+      "skills": [
+        {
+          "id": "sk-3yoqzm80p",
+          "name": "Python",
+          "highlight": true
+        },
+        {
+          "name": "MATLAB",
+          "highlight": true,
+          "id": "sk-hf8ztxp8n"
+        },
+        {
+          "id": "sk-8h0d7gov5",
+          "highlight": true,
+          "name": "Field Logistics Coordination"
+        },
+        {
+          "id": "sk-ew3q8549i",
+          "name": "Team Leadership & Project Management",
+          "highlight": true
+        }
+      ],
+      "description": "Scientific programming, field logistics coordination, and project leadership supporting technical operations.",
+      "category": "Programming & Soft Skills"
+    }
+  ],
+  "trainings": [
+    {
+      "id": "tr-coal-cpgcbl-2026",
+      "title": "5 days of Technical Training on Coal Testing at Coal Power Generation Company Bangladesh Limited (CPGCBL)",
+      "issuer": "Hunan Sundy Science and Technology Co., Ltd.",
+      "year": "2026",
+      "credentialUrl": "https://drive.google.com/file/d/1P36Fp3UB6hZE2FX_Sxw6IXnGGrQs981V/view?usp=drive_link",
+      "description": "Completed hands-on training at Matarbari Coal Power Plant, Cox's Bazar, conducted by Hunan Sundy Science and Technology Co., Ltd., covering coal quality analysis using Hardgrove Grindability Index Tester, Coulomb Sulfur Analyzer, Ash Fusion Tester, and Carbon, Hydrogen, and Nitrogen Analyzer.",
+      "galleryUrls": [],
+      "skillsAcquired": [],
+      "tickerSpeed": 30
+    },
+    {
+      "issuer": "Technical Institute of Chemical Industries, Bangladesh (TICI)",
+      "credentialUrl": "https://drive.google.com/file/d/1vs3_DNMxCstPSO1m1ivgR5LvJKn2VUcP/view?usp=drive_link",
+      "description": "A 109-hour industrial mechanical training program covering workshop technology, metro-logy and drawing, bearings and lubrication, process plant machinery, refrigeration and A/C, power transmission and alignment, bench fitting, industrial ancillaries, plant safety and instrumentation, and including the Ashulia Gas Powerplant, Narsingdi; Bangladesh.",
+      "tickerSpeed": 30,
+      "title": "28 days of Mechanical Workshop",
+      "galleryUrls": [
+        "https://drive.google.com/file/d/1NgkgOciuvlNhD_ZsdtFbaqW-pyeCunaZ/view?usp=sharing",
+        "https://drive.google.com/file/d/1zesrD_H9DKzlPFgyZD6uqGmn-9R9lpgf/view?usp=sharing"
+      ],
+      "skillsAcquired": [],
+      "year": "2023",
+      "id": "tr-1"
+    },
+    {
+      "credentialUrl": "",
+      "year": "2019",
+      "galleryUrls": [],
+      "id": "tr-2",
+      "title": "2 days workshop visit on Production Process of Machineries in Saidpur Railway Workshop",
+      "isLive": true,
+      "description": "Participated in scheduled training sessions and lab works conducted by railway mechanical experts, gaining hands-on experience with workshop projects focused on generation and power transmission , wheel and axle profiling using heavy machinery, major accident restorations, structural welding, industrial painting, and modern technology retrofitting to upgrade older trains and keep the railway network running smoothly and safely.",
+      "tickerSpeed": 30,
+      "skillsAcquired": [],
+      "issuer": "Saidpur Railway Workshop"
+    },
+    {
+      "tickerSpeed": 30,
+      "credentialUrl": "",
+      "description": "Operational energy data collection for off-grid hybrid energy research.",
+      "title": "Field visit: Wind Turbine Power Plant, Cox's Bazar",
+      "year": "2024",
+      "id": "tr-3",
+      "skillsAcquired": [],
+      "issuer": "Cox's Bazar Wind Power Project"
+    }
+  ],
+  "certifications": [
+    {
+      "id": "cert-coal-testing-2026",
+      "title": "Coal Testing and Laboratory Instrumentation",
+      "issuer": "Hunan Sundy Science and Technology Co., Ltd., CPGCBL, Bangladesh",
+      "year": "2026",
+      "credentialUrl": "https://drive.google.com/file/d/1P36Fp3UB6hZE2FX_Sxw6IXnGGrQs981V/view?usp=drive_link",
+      "imageUrl": "",
+      "description": "",
+      "modules": []
+    },
+    {
+      "id": "cert-1788063191590-92",
+      "description": "",
+      "modules": [
+        {
+          "title": "AI for Design and Optimizaiton",
+          "credentialUrl": "https://www.coursera.org/account/accomplishments/specialization/DF6IXCZ4GLCO",
+          "imageUrl": "https://drive.google.com/file/d/1XUkCtnrSg4htDac9IMRv4hHllRbu9QOC/view?usp=drive_link"
+        },
+        {
+          "credentialUrl": "https://www.coursera.org/account/accomplishments/verify/NZNF1UFC18QI",
+          "title": "AI for Autonomous Vehicles and Robotics",
+          "imageUrl": "https://drive.google.com/file/d/1x7yzfp1fW-SSLA5kIldHi6s2IlqU-kgN/view?usp=sharing"
+        },
+        {
+          "credentialUrl": "https://www.coursera.org/account/accomplishments/verify/C0RIZNP9P4MK",
+          "title": "AI for Energy and Biomedical Applications",
+          "imageUrl": "https://drive.google.com/file/d/1SbhAHZT_NTk8iOx0XtkoHz7u_IVORxkp/view?usp=sharing"
+        }
+      ],
+      "credentialUrl": "https://www.coursera.org/account/accomplishments/specialization/DF6IXCZ4GLCO",
+      "issuer": "University of Michigan",
+      "title": "AI for Mechanical Engineers",
+      "imageUrl": "https://drive.google.com/file/d/1XUkCtnrSg4htDac9IMRv4hHllRbu9QOC/view?usp=drive_link",
+      "year": "2026"
+    },
+    {
+      "modules": [
+        {
+          "title": "Phase Diagrams",
+          "credentialUrl": "https://www.coursera.org/account/accomplishments/verify/GH5HTVBG61IY",
+          "imageUrl": "https://drive.google.com/file/d/1Wc57wPvZ3-m3EzmoTqfKvqyEe2dNd-Yy/view?usp=sharing"
+        },
+        {
+          "credentialUrl": "https://www.coursera.org/account/accomplishments/verify/9NUO2KHTHM07",
+          "imageUrl": "https://drive.google.com/file/d/1clQroLsiG1ilp65g88bGUTd6hacjFAIX/view?usp=sharing",
+          "title": "Hardening, Polymers, Properties"
+        },
+        {
+          "credentialUrl": "https://www.coursera.org/account/accomplishments/verify/X8MU7P38P4BO",
+          "title": "Electrical Properties and Semiconductors",
+          "imageUrl": "https://drive.google.com/file/d/1alhKsD-ljXV3shQrnagTkoElrf-W8JYP/view?usp=sharing"
+        },
+        {
+          "credentialUrl": "https://www.coursera.org/account/accomplishments/verify/DRAV9EKVWSM1",
+          "imageUrl": "https://drive.google.com/file/d/1l920d6JdV8xHPtB2pztkyPtYa_yUf-fn/view?usp=sharing",
+          "title": "Ceramics and Composites"
+        }
+      ],
+      "id": "cert-3",
+      "year": "2026",
+      "description": "",
+      "title": "Materials Science for Advanced Technological Applications",
+      "credentialUrl": "https://www.coursera.org/account/accomplishments/specialization/XFZITWSB4QJN",
+      "imageUrl": "https://drive.google.com/file/d/1zRk1s7TC5p4JpTzbwdqA7kCDnktcDoBv/view?usp=sharing",
+      "issuer": "Arizona State University, USA"
+    },
+    {
+      "issuer": "University of California, Davis",
+      "description": "",
+      "modules": [],
+      "title": "Materials Science: 10 Things Every Engineer Should Know",
+      "credentialUrl": "https://www.coursera.org/account/accomplishments/verify/GEHSZNLRV8FC",
+      "year": "2026",
+      "id": "cert-1788063291673-648",
+      "imageUrl": "https://drive.google.com/file/d/1wRxmZATVMb6iHH2Z0WrNwGeIo2FUnV_I/view?usp=sharing"
+    },
+    {
+      "description": "",
+      "modules": [
+        {
+          "title": "Electric Power System",
+          "credentialUrl": "https://www.coursera.org/account/accomplishments/verify/WL4W4N1LDT6B",
+          "imageUrl": "https://drive.google.com/file/d/106GDNR_AGMymEhSez0J-Qw9jXzyWDgUV/view?usp=sharing"
+        },
+        {
+          "imageUrl": "https://drive.google.com/file/d/1W-a7KbQBqTzsACBuZFYQ4TOyMWgVD1r6/view?usp=sharing",
+          "title": "Natural Gas",
+          "credentialUrl": "https://www.coursera.org/account/accomplishments/verify/PSJW9LLSVEVX"
+        },
+        {
+          "title": "Safety in the Utility Industry",
+          "imageUrl": "https://drive.google.com/file/d/19ITJF6tNJl2YZj0XcDm0flMaNV2-4Vbu/view?usp=sharing",
+          "credentialUrl": "https://www.coursera.org/account/accomplishments/verify/XQVIXFNU5FBV"
+        },
+        {
+          "imageUrl": "https://drive.google.com/file/d/1FtxKZ6dSkL9uwJfDkriWogKw6SwTVBGF/view?usp=sharing",
+          "title": "Energy: The Enterprise",
+          "credentialUrl": "https://www.coursera.org/account/accomplishments/verify/VGRP1I5LDIKS"
+        }
+      ],
+      "imageUrl": "https://drive.google.com/file/d/10-jKeV10EPFKQ1GSka5jVHjVkT4KYRoK/view?usp=sharing",
+      "issuer": "University of Buffalo and Stony Brook University, USA",
+      "credentialUrl": "https://www.coursera.org/account/accomplishments/specialization/7AKSDBAO0KRT",
+      "title": "Energy Production Distribution & Safety",
+      "year": "2026",
+      "id": "cert-1"
+    },
+    {
+      "title": "Renewable Energy Technology Fundamentals",
+      "description": "",
+      "issuer": "University of Colorado Boulder, USA",
+      "imageUrl": "https://drive.google.com/file/d/1fGpE6RpWDeqsgOjZd9wSDpip9SEWriv1/view?usp=sharing",
+      "modules": [],
+      "id": "cert-2",
+      "credentialUrl": "https://www.coursera.org/account/accomplishments/verify/MR040LC5TPUN",
+      "year": "2026"
+    },
+    {
+      "title": "MATLAB Simulink",
+      "credentialUrl": "",
+      "issuer": "MATLAB",
+      "imageUrl": "https://drive.google.com/file/d/1GsV8eY9oWyNxDdmEJM7iPbFt5e6vCjfC/view?usp=sharing",
+      "id": "cert-1788069686296-80",
+      "year": "2026",
+      "modules": [
+        {
+          "credentialUrl": "",
+          "imageUrl": "https://drive.google.com/file/d/1iCTZzU9vto31geTi2GXcEdPu1bpsK8EG/view?usp=sharing",
+          "title": "MATLAB Mathworks"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "year": "2020",
+      "issuer": "SolidWorks (Online)",
+      "id": "cert-4",
+      "title": "SolidWorks Certified Additive Manufacturing Associate, Certified CAD Professional, Certified Sheet Metal Professional"
+    },
+    {
+      "issuer": "Bangladesh Physics Olympiad",
+      "id": "cert-5",
+      "imageUrl": "https://drive.google.com/file/d/1KyB0IlPYgzsnIv_UBuP1kgWjn6hHRsnR/view?usp=sharing",
+      "title": "Certified on Physics Olympiad in Divisional Region",
+      "year": "2017",
+      "credentialUrl": "https://drive.google.com/file/d/1KyB0IlPYgzsnIv_UBuP1kgWjn6hHRsnR/view?usp=drive_link",
+      "modules": [
+        {
+          "credentialUrl": "",
+          "imageUrl": "https://drive.google.com/file/d/1KyB0IlPYgzsnIv_UBuP1kgWjn6hHRsnR/view?usp=sharing",
+          "title": "Physics Olympiad"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "modules": [
+        {
+          "imageUrl": "https://drive.google.com/file/d/1DhfUFw8s__7Sa4BVIjZozPNqHFkYS2yN/view?usp=sharing",
+          "credentialUrl": "https://www.coursera.org/account/accomplishments/verify/6IMNFGVU2JPK",
+          "title": "Python Basics"
+        }
+      ],
+      "issuer": "IEEE HSTU and University of MICHIGAN",
+      "imageUrl": "https://drive.google.com/file/d/14iBTWY6eox0UIQmHTBuU6F7G0cVd5V-D/view?usp=sharing",
+      "description": "",
+      "credentialUrl": "https://drive.google.com/file/d/1317PbCYqVNJKB4jh8XmFE_p9IByakExf/view?usp=sharing",
+      "id": "cert-6",
+      "year": "2021",
+      "title": "Workshop on Python PL"
+    },
+    {
+      "modules": [],
+      "year": "2025",
+      "title": "Six Sigma Yellow Belt",
+      "credentialUrl": "https://www.6sigmastudy.com/certification/verify?type=SSYB&number=904518",
+      "description": "",
+      "id": "cert-7",
+      "imageUrl": "https://drive.google.com/file/d/1PbEdQlKXfQEE1FOhc53SNm2a6p3ttYVS/view?usp=drive_link",
+      "issuer": "SCRUMstudy"
+    },
+    {
+      "id": "cert-innovis-2020",
+      "title": "INNOVIS-2020 Idea Generation Contest - Champion Team",
+      "issuer": "IEEE HSTU Student Branch, Bangladesh",
+      "year": "2020",
+      "credentialUrl": "https://drive.google.com/file/d/1Yj87JOtspFqModL9WI_7OvmF3ujXOIZ3/view?usp=drive_link",
+      "imageUrl": "",
+      "description": "",
+      "modules": []
+    }
+  ],
+  "achievements": [
+    {
+      "id": "ach-innovis-2020",
+      "title": "Champion as a team in Idea Generation Contest which is a segment of “INNOVIS-2020”",
+      "organization": "IEEE | HSTU",
+      "date": "October, 2020"
+    },
+    {
+      "title": "Bronze Medalist, Divisional Physics Olympiad",
+      "organization": "Bangladesh Physics Olympiad",
+      "id": "ach-1",
+      "date": "August, 2016"
+    },
+    {
+      "date": "January, 2017",
+      "id": "ach-2",
+      "organization": "Bangladesh Mathematical Olympiad",
+      "title": "Bronze Medalist, Regional Mathematical Olympiad"
+    }
+  ],
+  "affiliations": [
+    {
+      "id": "aff-1",
+      "organization": "Cox’s Bazar Youth Development Society (CYDS)",
+      "role": "Executive Member",
+      "period": "2024 - 2025"
+    },
+    {
+      "organization": "Institution of Mechanical Engineers (IMechE)",
+      "membershipId": "80778687",
+      "period": "2019 - 2024",
+      "id": "aff-2",
+      "role": "Affiliated Member"
+    },
+    {
+      "period": "2019 - 2024",
+      "id": "aff-3",
+      "role": "Student Member",
+      "organization": "American Society of Mechanical Engineers (ASME)",
+      "membershipId": "103515864"
+    }
+  ],
+  "volunteerWork": [
+    {
+      "id": "vol-1",
+      "description": "Organized and conducted two segments of the national inter-university mechanical festival at HSTU",
+      "title": "Robo-riot Contest Event Organizer, Deceleration - A National Mechanical Festival",
+      "period": "2022 – 2023"
+    },
+    {
+      "description": "Shared news about Autodesk products, events, and completed challenges on social media platforms",
+      "period": "2019 – 2021",
+      "id": "vol-2",
+      "title": "Autodesk Ambassador Hub"
+    },
+    {
+      "description": "Conducted weekly classes for junior categories",
+      "period": "2017 – 2018",
+      "isLive": true,
+      "id": "vol-3",
+      "title": "Adjunct Teacher, Cox's Bazar Govt. High School"
+    }
+  ],
+  "references": [
+    {
+      "email": "rasel@me.ruet.ac.bd",
+      "website": "https://www.ruet.ac.bd/raselahmedruet13",
+      "id": "ref-1",
+      "phone": "+880 1776 976 345",
+      "role": "Lecturer",
+      "name": "Md. Rasel Ahmed",
+      "organization": "Rajshahi University of Engineering & Technology (RUET)",
+      "department": "Department of Mechanical Engineering"
+    },
+    {
+      "website": "https://hstu.ac.bd/teacher/nazmul_ahsan",
+      "email": "nazmul.me@hstu.ac.bd",
+      "organization": "Hajee Mohammad Danesh Science & Technology University (HSTU)",
+      "name": "KH. Nazmul Ahshan",
+      "role": "Chairman and Assistant Professor",
+      "id": "ref-2",
+      "department": "Department of Mechanical Engineering",
+      "phone": "+880 1884 598 886"
+    }
+  ],
+  "sectionConfig": {
+    "publications": {
+      "subtitle": "",
+      "title": "Publications & Research Papers",
+      "visible": true
+    },
+    "capabilities": {
+      "title": "Engineering & Simulation Proficiencies",
+      "subtitle": ""
+    },
+    "projects": {
+      "subtitle": "",
+      "title": "Undergrad Projects"
+    },
+    "overview": {
+      "title": "",
+      "visible": true,
+      "showPillars": true,
+      "subtitle": ""
+    },
+    "hero": {
+      "visible": true
+    },
+    "trainings": {
+      "subtitle": "Industrial workshops, power plant field visits, and internationally accredited certifications in energy, materials science, CAD, and quality engineering.",
+      "title": "Traning & Professional Certifications"
+    },
+    "experience": {
+      "visible": true,
+      "title": "Relevant Experiences & Education",
+      "subtitle": ""
+    },
+    "honors": {
+      "subtitle": "Competitive olympiad awards, university organization leadership, disaster relief volunteering, and academic thesis references.",
+      "title": "Honors, Co-Curricular Leadership & Academic References"
+    }
+  },
+  "pillars": [
+    {
+      "description": "Combustion modeling of green hydrogen vs conventional fuels in PFI SI engines, thermo-hydraulic heat exchanger modeling, and atomistic molecular dynamics.",
+      "id": "pillar-2",
+      "title": "Computation Fluid Dynamics",
+      "icon": "Flame",
+      "tag": "CONVERGE 3.0 · COMSOL Multiphysics · SolidWorks"
+    },
+    {
+      "id": "pillar-1",
+      "icon": "Cpu",
+      "title": "Hybrid Energy Modelling",
+      "description": "Hybrid system optimization, LCOE/NPC/LCOH techno-economic analysis, load assessment, life cycle analysis (LCA), and off-grid system validation with uncertainty analysis (Montecarlo) and multi-objective optimization (MOPSO/NSGA-II)",
+      "tag": "HOMER Pro · PVsyst · RETscreen"
+    },
+    {
+      "title": "Electrical & Maintenance",
+      "id": "pillar-3",
+      "icon": "Wrench",
+      "description": "Electrical installation assessment, PV integration, diesel/biogas generator performance monitoring, and safety compliance in resource-constrained environments.",
+      "tag": "Preventive & Corrective Diagnostics"
+    },
+    {
+      "description": "Hands-on fieldwork across coastal Bangladesh, technician coaching, technical documentation, and applying energy expertise for coastal community.",
+      "tag": "Remote Infrastructure · Capacity Building",
+      "title": "Fieldwork & Humanitarian Support",
+      "icon": "Compass",
+      "id": "pillar-4"
+    }
+  ],
+  "metrics": [
+    {
+      "value": "6 Papers",
+      "sub": "3 Published · 2 Under Review · 1 Submitted",
+      "label": "Journal Publications & Research",
+      "id": "metric-1"
+    },
+    {
+      "label": "B.Sc. Mechanical Engineering",
+      "id": "metric-2",
+      "value": "3.363 / 4.00",
+      "sub": "HSTU Dinajpur (2019–2022)"
+    },
+    {
+      "value": "CSWE",
+      "id": "metric-3",
+      "label": "SolidWorks Certified",
+      "sub": "CAD Professional & Sheet Metal"
+    },
+    {
+      "label": "Physics & Math Olympiad",
+      "value": "2 Medals",
+      "id": "metric-4",
+      "sub": "Divisional & Regional Awards"
+    }
+  ],
+  "profile": {
+    "avatarUrl": "https://drive.google.com/file/d/1uHdhS_9toIz1McR5Qn78qE2opogHWl5c/view?usp=sharing",
+    "location": "Cox's Bazar Sadar, 4700, Bangladesh",
+    "social": {
+      "researchgate": "https://www.researchgate.net/profile/Rashedul-Islam-65",
+      "orcid": "https://orcid.org/0009-0001-9844-5678",
+      "scholar": "https://scholar.google.com/citations?user=lCyuApIAAAAJ&hl",
+      "linkedin": "https://linkedin.com/in/rashedown"
+    },
+    "siteTitle": "Rashedul Islam | Mechanical Engineer",
+    "affiliation": "Hajee Mohammad Danesh Science & Technology University (HSTU)",
+    "phone": "(+880) 1855 362 882",
+    "stats": {
+      "hIndex": 2,
+      "publicationsCount": 6,
+      "citations": 14,
+      "researchProjects": 2
+    },
+    "bio": "",
+    "name": "RASHEDUL ISLAM",
+    "researchInterests": [
+      "Materials Science",
+      "Additive Manufacturing Materials",
+      "Renewable Energy",
+      "Hydrogen Fuel",
+      "CFD in biofuels"
+    ],
+    "logoUrl": "https://drive.google.com/file/d/1RsbjbZ3fzL7LmoMNWoQ8aimuNalcNT1H/view?usp=drive_link",
+    "headline": "Welcome to my personal webpage",
+    "avatarGlowStyle": "golden-energy",
+    "email": "rashed.me.82@gmail.com",
+    "statusTag": "",
+    "cvUrl": "#",
+    "department": "Department of Mechanical Engineering",
+    "title": "• Mechanical Engineer  • Researcher • Philomath",
+    "aboutText": [
+      "Hi! I'm Rashedul Islam, a mechanical engineer a native of Cox's Bazar, Bangladesh, with a strong and lasting interest in Computational Fluid Dynamics and hydrogen combustion. I completed my B.Sc. in Mechanical Engineering at Hajee Mohammad Danesh Science and Technology University (HSTU), Dinajpur, and from early on I found myself pulled toward the questions CFD lets you ask- how fuels ignite and burn, how flows behave under pressure and turbulence, and how small changes in geometry or chemistry ripple through a system's performance. That curiosity has stayed with me, and I continue to work with tools like CONVERGE, and COMSOL Multiphysics to explore combustion and reacting-flow problems, with hydrogen as a fuel of particular interest given its promise for cleaner energy systems.",
+      "Beyond CFD, I've been increasingly drawn into materials science and heat transfer. I'm fascinated by how materials behave under mechanical, thermal, and structural stress at the molecular level, and by the engineering challenge of moving heat efficiently through complex systems- both feel like natural extensions of the same simulation-driven mindset I bring to combustion work.",
+      "Renewable energy rounds out my interests. Having grown up in a coastal region shaped by resource constraints and grid instability, I care about hybrid and off-grid power systems- solar, wind, and biogas, and how they can be modeled, optimized, and deployed in places that need them most.",
+      "At the core of all this is a simple motivation: using computation to make sense of complex physical problems, and building engineering judgment that translates cleanly from simulation to the real world. I hope to keep deepening that work across CFD, materials science, heat transfer, and renewable energy in the years ahead."
+    ],
+    "researchInterestText": "My work centers on computational fluid dynamics and hydrogen combustion, extending into materials science, heat transfer, and additive manufacturing. Renewable energy systems- particularly hybrid, off-grid optimized solutions- round out this focus, with simulation-driven modeling as the common thread across all of it.",
+    "pillars": [
+      {
+        "iconName": "Cpu",
+        "description": "fsfsfef",
+        "title": "ihpiihi",
+        "tag": "caschaoakod"
+      }
+    ],
+    "overviewMetrics": [
+      {
+        "sub": "ferw",
+        "value": "dfsfsf",
+        "label": "dfsfe"
+      }
+    ]
+  }
+}

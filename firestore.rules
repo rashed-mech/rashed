@@ -1,0 +1,19 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /portfolio/{docId} {
+      // Public portfolio content only. Messages and all writes use the Admin SDK.
+      allow get: if docId in [
+        'profile', 'publications', 'projects', 'experience', 'education',
+        'skillGroups', 'trainings', 'certifications', 'achievements',
+        'affiliations', 'volunteerWork', 'references', 'sectionConfig',
+        'pillars', 'metrics', 'themeUX'
+      ];
+      allow list, write: if false;
+    }
+    match /portfolio_images/{docId} {
+      allow get: if true;
+      allow list, write: if false;
+    }
+  }
+}

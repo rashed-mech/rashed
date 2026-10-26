@@ -1,0 +1,255 @@
+/* Original portfolio layout, with the retained daylight canvas and motion polish. */
+html:has([data-experience="original-enhanced"]):not(.dark), html:not(.dark) body:has([data-experience="original-enhanced"]),
+#public-portfolio-root[data-experience="original-enhanced"]:not(.dark) {
+  background-color: #f3f5ef !important;
+}
+#public-portfolio-root[data-experience="original-enhanced"]:not(.dark) section {
+  background-color: transparent;
+}
+#public-portfolio-root[data-experience="original-enhanced"]:not(.dark) #theme-atmosphere-canvas {
+  opacity: .35;
+}
+#public-portfolio-root[data-experience="original-enhanced"] {
+  overflow-x: clip;
+}
+/* One clear type system across the public portfolio. Technical labels retain
+   their weight and spacing, but no longer switch to a second typeface. */
+#public-portfolio-root[data-experience="original-enhanced"],
+#public-portfolio-root[data-experience="original-enhanced"] :is(h1, h2, h3, h4, p, a, button, input, select, textarea, .font-mono, .font-serif) {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+#public-portfolio-root[data-experience="original-enhanced"] .font-mono {
+  letter-spacing: 0.04em;
+}
+#public-portfolio-root[data-experience="original-enhanced"] :is(h1, h2, h3, h4) {
+  letter-spacing: -0.025em;
+}
+#public-portfolio-root .enhanced-section {
+  --motion-accent: var(--primary-accent-rgb, 37, 99, 235);
+}
+.section-arrival-beam {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+  height: 1px;
+  top: 0;
+  left: max(24px, calc((100% - 1216px) / 2));
+  right: max(24px, calc((100% - 1216px) / 2));
+  transform-origin: left center;
+  background: linear-gradient(90deg, transparent, rgba(var(--motion-accent), .8), rgba(var(--motion-accent), .25), transparent);
+  box-shadow: 0 0 18px rgba(var(--motion-accent), .15);
+}
+[data-section-animation="slide-right"] .section-arrival-beam,
+[data-section-animation="diagonal-right"] .section-arrival-beam { transform-origin: right center; }
+[data-section-animation="scale-crest"] .section-arrival-beam,
+[data-section-animation="magnetic-glow"] .section-arrival-beam { transform-origin: center; }
+/* Headings and intro copy: hidden only once the observer is live, so content
+   never disappears if scripts or motion are unavailable. */
+.enhanced-section[data-reveal-ready] :is(h2, section > div > div > p, form):not([data-heading-revealed]) {
+  opacity: 0;
+}
+.enhanced-section [data-heading-revealed="true"] {
+  animation: portfolio-heading-arrival .9s cubic-bezier(.16, 1, .3, 1) var(--section-delay, 0s) both;
+}
+.enhanced-section h2[data-heading-revealed="true"] {
+  animation-name: portfolio-title-arrival;
+  animation-duration: 1s;
+  display: inline-block;
+  width: fit-content;
+  max-width: 100%;
+  position: relative;
+}
+/* Engineering-drawing dimension line under each section title. */
+.enhanced-section h2[data-heading-revealed="true"]::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 9px;
+  margin-top: 12px;
+  background:
+    linear-gradient(currentColor, currentColor) left center / 100% 1.5px no-repeat,
+    linear-gradient(currentColor, currentColor) left center / 1.5px 100% no-repeat,
+    linear-gradient(currentColor, currentColor) right center / 1.5px 100% no-repeat;
+  color: rgba(var(--motion-accent), .75);
+  transform-origin: left;
+  animation: portfolio-line-arrival 1.1s cubic-bezier(.16, 1, .3, 1) .25s both;
+}
+
+.enhanced-section [data-motion-card] { position: relative; }
+@media (hover: hover) and (pointer: fine) {
+  .enhanced-section [data-motion-card] {
+    rotate: 1 1 0 0deg;
+    translate: 0 0;
+    transition: rotate .28s cubic-bezier(.16, 1, .3, 1), translate .28s cubic-bezier(.16, 1, .3, 1), border-color .2s, box-shadow .28s;
+  }
+  .enhanced-section [data-motion-card][data-motion-hover="true"] {
+    rotate: 1 1 0 var(--card-tilt, 0deg);
+    translate: 0 -4px;
+    box-shadow: 0 16px 36px -24px rgba(var(--motion-accent), .26);
+  }
+  .enhanced-section [data-motion-card]::after {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(300px circle at var(--card-light-x, 50%) var(--card-light-y, 50%), rgba(var(--motion-accent), .09), transparent 78%);
+    opacity: 0;
+    transition: opacity .2s ease-out;
+  }
+  .enhanced-section [data-motion-card][data-motion-hover="true"]::after { opacity: 1; }
+  #public-portfolio-root[data-experience="original-enhanced"] main a[class*="rounded"],
+  #public-portfolio-root[data-experience="original-enhanced"] main button[class*="rounded"] {
+    transition-property: color, background-color, border-color, box-shadow, transform, translate;
+    transition-duration: .2s;
+    transition-timing-function: cubic-bezier(.16, 1, .3, 1);
+  }
+  #public-portfolio-root[data-experience="original-enhanced"] main :is(a, button)[class*="rounded"]:hover { translate: 0 -2px; }
+  #public-portfolio-root[data-experience="original-enhanced"] main :is(a, button)[class*="rounded"]:active { translate: 0 0; }
+  #public-portfolio-root[data-experience="original-enhanced"] main :is(a, button) .lucide-arrow-right {
+    transition: translate .2s cubic-bezier(.16, 1, .3, 1);
+  }
+  #public-portfolio-root[data-experience="original-enhanced"] main :is(a, button):hover .lucide-arrow-right { translate: 4px 0; }
+}
+@keyframes portfolio-heading-arrival {
+  from { opacity: 0; translate: 0 24px; filter: blur(8px); }
+  to { opacity: 1; translate: 0 0; filter: blur(0); }
+}
+@keyframes portfolio-title-arrival {
+  from { opacity: 0; translate: 0 0.6em; clip-path: inset(0 0 100% 0); filter: blur(6px); }
+  to { opacity: 1; translate: 0 0; clip-path: inset(-0.2em -0.2em -1em -0.2em); filter: blur(0); }
+}
+@keyframes portfolio-line-arrival {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  #public-portfolio-root[data-experience="original-enhanced"] *,
+  #public-portfolio-root[data-experience="original-enhanced"] *::before,
+  #public-portfolio-root[data-experience="original-enhanced"] *::after {
+    animation: none !important;
+    transition-duration: .01ms !important;
+  }
+  .enhanced-section [data-motion-card] { rotate: none !important; translate: none !important; }
+  .section-arrival-beam { display: none; }
+}
+
+/* ───────────────────────── Mechanical motion layer ───────────────────────── */
+#public-portfolio-root { --mech-accent: 245, 158, 11; --mech-ink: 15, 23, 42; }
+#public-portfolio-root.dark { --mech-ink: 226, 232, 240; }
+#public-portfolio-root[data-theme-design="design-2"] { --mech-accent: 16, 185, 129; }
+#public-portfolio-root[data-theme-design="design-3"] { --mech-accent: 217, 119, 6; }
+#public-portfolio-root[data-theme-design="design-4"] { --mech-accent: 56, 189, 248; }
+#public-portfolio-root[data-theme-design="design-5"] { --mech-accent: 20, 184, 166; }
+#public-portfolio-root[data-theme-design="design-6"] { --mech-accent: 212, 175, 55; }
+
+/* Smooth scroll (Lenis) owns scrolling while active. */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: clip; }
+
+/* Hero name: letters rise out of a mask. */
+.hero-name-word { display: inline-flex; white-space: nowrap; }
+.hero-name-mask { display: inline-block; overflow: hidden; padding: 0.08em 0 0.12em; margin: -0.08em 0 -0.12em; vertical-align: bottom; }
+.hero-name-letter { display: inline-block; transform-origin: 0% 100%; will-change: transform; }
+.hero-name-space { display: inline-block; width: 0.28em; }
+
+/* Blueprint backdrop behind the hero. */
+.hero-blueprint { position: absolute; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.hero-blueprint-grid {
+  position: absolute; inset: -2px;
+  background-image:
+    linear-gradient(rgba(var(--mech-accent), .07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--mech-accent), .07) 1px, transparent 1px),
+    linear-gradient(rgba(var(--mech-accent), .035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--mech-accent), .035) 1px, transparent 1px);
+  background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+  mask-image: radial-gradient(ellipse 80% 70% at 70% 20%, #000 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 70% 20%, #000 20%, transparent 75%);
+  animation: blueprint-pan 40s linear infinite;
+}
+.hero-blueprint-gears {
+  position: absolute; right: -180px; top: -150px; width: min(700px, 80vw); height: auto;
+  fill: none; stroke: rgba(var(--mech-accent), .2); stroke-width: 1.2;
+  opacity: .75;
+}
+.hero-blueprint-gears line { stroke-width: .8; }
+.hero-blueprint-dim { stroke: rgba(var(--mech-ink), .25); }
+.hero-blueprint-dim text { fill: rgba(var(--mech-ink), .4); stroke: none; font: 600 11px/1 'JetBrains Mono', ui-monospace, monospace; letter-spacing: .08em; }
+@media (max-width: 767px) { .hero-blueprint-gears { opacity: .45; right: -260px; } }
+@keyframes blueprint-pan { to { background-position: 120px 120px, 120px 120px, 24px 24px, 24px 24px; } }
+
+/* Rotating dial around the portrait. */
+.hero-portrait { isolation: isolate; }
+.hero-halo {
+  position: absolute; inset: -14px; width: calc(100% + 28px); height: calc(100% + 28px);
+  pointer-events: none; z-index: -1; overflow: visible; color: rgb(var(--mech-accent));
+}
+.hero-halo-line { fill: none; stroke: currentColor; stroke-width: .5; opacity: .35; }
+.hero-halo-line.inner { opacity: .18; }
+.hero-halo-orbit { transform-origin: 0 0; animation: gear-ring-spin 14s linear infinite; }
+.hero-halo-arc { fill: none; stroke-width: 1.2; stroke-linecap: round; stroke-dasharray: 22 78; rotate: -22deg; transform-origin: 0 0; }
+.hero-halo-dot { fill: currentColor; filter: drop-shadow(0 0 3px currentColor); }
+.hero-portrait:hover .hero-halo-orbit { animation-duration: 6s; }
+@keyframes gear-ring-spin { to { rotate: 360deg; } }
+
+/* Shine sweep on primary buttons. */
+.btn-shine { position: relative; overflow: hidden; isolation: isolate; transition: translate .35s cubic-bezier(.16, 1, .3, 1) !important; }
+.btn-shine::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, .35) 50%, transparent 70%);
+  translate: -120% 0; transition: translate .7s cubic-bezier(.16, 1, .3, 1);
+}
+.btn-shine:hover::before { translate: 120% 0; }
+[data-magnetic] { transition: translate .35s cubic-bezier(.16, 1, .3, 1), background-color .5s, border-color .5s, box-shadow .5s, color .5s; }
+
+/* Dot cursor: a white dot that inverts whatever sits beneath it (fine pointers only). */
+@media (hover: hover) and (pointer: fine) {
+  html.dot-cursor-on, html.dot-cursor-on body, html.dot-cursor-on * { cursor: none !important; }
+}
+.dot-cursor {
+  position: fixed; left: 0; top: 0; z-index: 2147483647; pointer-events: none;
+  width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%;
+  background: #fff; mix-blend-mode: difference; opacity: 0; will-change: transform;
+  transition: opacity .2s ease, width .16s ease, height .16s ease, margin .16s ease;
+}
+.dot-cursor.on { opacity: 1; }
+.dot-cursor.hot { width: 30px; height: 30px; margin: -15px 0 0 -15px; }
+.dot-cursor.down { width: 8px; height: 8px; margin: -4px 0 0 -4px; }
+.dot-cursor.labelled { width: 104px; height: 104px; margin: -52px 0 0 -52px; }
+.dot-cursor-label {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  padding: 0 16px; text-align: center; color: #000; opacity: 0; transform: scale(.8);
+  font: 600 12px/1.18 'Space Grotesk', 'Inter Variable', sans-serif; letter-spacing: .06em; text-transform: uppercase;
+  transition: opacity .16s ease, transform .2s cubic-bezier(.22, 1, .36, 1);
+}
+.dot-cursor.labelled .dot-cursor-label { opacity: 1; transform: scale(1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-blueprint-grid, .hero-halo-orbit, .dock-gear { animation: none !important; }
+  .enhanced-section[data-reveal-ready] :is(h2, section > div > div > p, form):not([data-heading-revealed]) { opacity: 1; }
+}
+
+/* Floating back-to-top dial: glowing progress ring, scroll-driven gear, live percentage. */
+.dock-button {
+  position: relative; width: 45px; height: 45px; border-radius: 999px; padding: 0;
+  display: grid; place-items: center; cursor: pointer; border: 0;
+  background: radial-gradient(circle at 30% 25%, #1e293b, #070b12 70%);
+  box-shadow: 0 10px 30px -8px rgba(0, 0, 0, .55), 0 0 0 1px rgba(255, 255, 255, .06), 0 0 24px -4px var(--dock-c2);
+  transition: box-shadow .35s ease;
+}
+.dock-button:hover { box-shadow: 0 14px 34px -8px rgba(0, 0, 0, .6), 0 0 0 1px rgba(255, 255, 255, .1), 0 0 34px 0 var(--dock-c2); }
+.dock-svg { position: absolute; inset: 0; width: 100%; height: 100%; rotate: -90deg; overflow: visible; }
+.dock-track { fill: none; stroke: rgba(255, 255, 255, .1); stroke-width: 3; }
+.dock-progress { fill: none; stroke-width: 3.5; stroke-linecap: round; filter: drop-shadow(0 0 4px var(--dock-c2)); }
+.dock-gear { fill: rgba(255, 255, 255, .04); stroke-width: 1.4; opacity: .9; }
+.dock-arrow { position: relative; z-index: 1; width: 15px; height: 15px; color: #fff; transition: translate .3s cubic-bezier(.22, 1, .36, 1); }
+.dock-button:hover .dock-arrow { translate: 0 -2px; }
+.dock-percent {
+  position: absolute; top: -10px; right: -8px; min-width: 28px; padding: 2px 5px; border-radius: 999px;
+  font: 800 8.5px/1 'JetBrains Mono', ui-monospace, monospace; letter-spacing: .02em; color: #0b0f14; text-align: center;
+  background: linear-gradient(135deg, var(--dock-c1), var(--dock-c2));
+  box-shadow: 0 4px 12px -2px var(--dock-c2), 0 0 0 2px #070b12;
+}
+html:not(.dark) .dock-percent { box-shadow: 0 4px 12px -2px var(--dock-c2), 0 0 0 2px #fff; }

@@ -1,0 +1,126 @@
+/* Original portfolio layout, with the retained daylight canvas and motion polish. */
+html:has([data-experience="original-enhanced"]):not(.dark), html:not(.dark) body:has([data-experience="original-enhanced"]),
+#public-portfolio-root[data-experience="original-enhanced"]:not(.dark) {
+  background-color: #f3f5ef !important;
+}
+#public-portfolio-root[data-experience="original-enhanced"]:not(.dark) section {
+  background-color: transparent;
+}
+#public-portfolio-root[data-experience="original-enhanced"]:not(.dark) #theme-atmosphere-canvas {
+  opacity: .35;
+}
+#public-portfolio-root[data-experience="original-enhanced"] {
+  overflow-x: clip;
+}
+/* One clear type system across the public portfolio. Technical labels retain
+   their weight and spacing, but no longer switch to a second typeface. */
+#public-portfolio-root[data-experience="original-enhanced"],
+#public-portfolio-root[data-experience="original-enhanced"] :is(h1, h2, h3, h4, p, a, button, input, select, textarea, .font-mono, .font-serif) {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+#public-portfolio-root[data-experience="original-enhanced"] .font-mono {
+  letter-spacing: 0.04em;
+}
+#public-portfolio-root[data-experience="original-enhanced"] :is(h1, h2, h3, h4) {
+  letter-spacing: -0.025em;
+}
+#public-portfolio-root .enhanced-section {
+  --motion-accent: var(--primary-accent-rgb, 37, 99, 235);
+}
+.section-arrival-beam {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+  height: 1px;
+  top: 0;
+  left: max(24px, calc((100% - 1216px) / 2));
+  right: max(24px, calc((100% - 1216px) / 2));
+  transform-origin: left center;
+  background: linear-gradient(90deg, transparent, rgba(var(--motion-accent), .8), rgba(var(--motion-accent), .25), transparent);
+  box-shadow: 0 0 18px rgba(var(--motion-accent), .15);
+}
+[data-section-animation="slide-right"] .section-arrival-beam,
+[data-section-animation="diagonal-right"] .section-arrival-beam { transform-origin: right center; }
+[data-section-animation="scale-crest"] .section-arrival-beam,
+[data-section-animation="magnetic-glow"] .section-arrival-beam { transform-origin: center; }
+.enhanced-section [data-heading-revealed="true"] {
+  animation: portfolio-heading-arrival var(--section-duration, .42s) cubic-bezier(.16, 1, .3, 1) var(--section-delay, 0s) both;
+}
+.enhanced-section h2[data-heading-revealed="true"] {
+  animation-name: portfolio-title-arrival;
+  display: inline-block;
+  width: fit-content;
+  max-width: 100%;
+}
+.enhanced-section h2[data-heading-revealed="true"]::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 2px;
+  margin-top: 12px;
+  background: #cbd5e1;
+  transform-origin: left;
+  animation: portfolio-line-arrival .45s cubic-bezier(.16, 1, .3, 1) both;
+}
+html.dark #public-portfolio-root[data-experience="original-enhanced"] .enhanced-section h2[data-heading-revealed="true"]::after {
+  background: #334155;
+}
+.enhanced-section [data-motion-card] { position: relative; }
+@media (hover: hover) and (pointer: fine) {
+  .enhanced-section [data-motion-card] {
+    rotate: 1 1 0 0deg;
+    translate: 0 0;
+    transition: rotate .28s cubic-bezier(.16, 1, .3, 1), translate .28s cubic-bezier(.16, 1, .3, 1), border-color .2s, box-shadow .28s;
+  }
+  .enhanced-section [data-motion-card][data-motion-hover="true"] {
+    rotate: 1 1 0 var(--card-tilt, 0deg);
+    translate: 0 -4px;
+    box-shadow: 0 16px 36px -24px rgba(var(--motion-accent), .26);
+  }
+  .enhanced-section [data-motion-card]::after {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(300px circle at var(--card-light-x, 50%) var(--card-light-y, 50%), rgba(var(--motion-accent), .09), transparent 78%);
+    opacity: 0;
+    transition: opacity .2s ease-out;
+  }
+  .enhanced-section [data-motion-card][data-motion-hover="true"]::after { opacity: 1; }
+  #public-portfolio-root[data-experience="original-enhanced"] main a[class*="rounded"],
+  #public-portfolio-root[data-experience="original-enhanced"] main button[class*="rounded"] {
+    transition-property: color, background-color, border-color, box-shadow, transform, translate;
+    transition-duration: .2s;
+    transition-timing-function: cubic-bezier(.16, 1, .3, 1);
+  }
+  #public-portfolio-root[data-experience="original-enhanced"] main :is(a, button)[class*="rounded"]:hover { translate: 0 -2px; }
+  #public-portfolio-root[data-experience="original-enhanced"] main :is(a, button)[class*="rounded"]:active { translate: 0 0; }
+  #public-portfolio-root[data-experience="original-enhanced"] main :is(a, button) .lucide-arrow-right {
+    transition: translate .2s cubic-bezier(.16, 1, .3, 1);
+  }
+  #public-portfolio-root[data-experience="original-enhanced"] main :is(a, button):hover .lucide-arrow-right { translate: 4px 0; }
+}
+@keyframes portfolio-heading-arrival {
+  from { opacity: .3; translate: 0 16px; }
+  to { opacity: 1; translate: 0 0; }
+}
+@keyframes portfolio-title-arrival {
+  from { opacity: .3; translate: 0 12px; clip-path: inset(0 0 70% 0); }
+  to { opacity: 1; translate: 0 0; clip-path: inset(0); }
+}
+@keyframes portfolio-line-arrival {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  #public-portfolio-root[data-experience="original-enhanced"] *,
+  #public-portfolio-root[data-experience="original-enhanced"] *::before,
+  #public-portfolio-root[data-experience="original-enhanced"] *::after {
+    animation: none !important;
+    transition-duration: .01ms !important;
+  }
+  .enhanced-section [data-motion-card] { rotate: none !important; translate: none !important; }
+  .section-arrival-beam { display: none; }
+}

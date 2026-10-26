@@ -1,0 +1,778 @@
+@import "tailwindcss" source(none);
+@source "./components/admin";
+@source "./components";
+@source "./components/CommandPalette.tsx";
+@source "./context";
+@source "./App.tsx";
+@source "../index.html";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  html {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    scroll-behavior: smooth;
+  }
+  
+  html.dark {
+    color-scheme: dark;
+    background-color: #080d14;
+    color: #f1f5f9;
+  }
+
+  html:not(.dark) {
+    color-scheme: light;
+    background-color: #F8FAFC;
+    color: #0f172a;
+  }
+
+  body:not(.dark) {
+    background-color: #F8FAFC;
+  }
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.animate-cursor-blink {
+  animation: cursor-blink 0.75s step-start infinite;
+}
+
+.font-serif {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+html.dark ::-webkit-scrollbar-track {
+  background: #080d14;
+}
+html.dark ::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+html:not(.dark) ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+html:not(.dark) ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+html:not(.dark) ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+@keyframes pulseFlow {
+  0% {
+    stroke-dashoffset: 24;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-pulse-flow {
+  animation: pulseFlow 1.6s linear infinite;
+}
+
+/* Eye-catching, ultra-readable text selection across all elements including transparent gradients */
+*::selection,
+::selection {
+  background-color: #1d4ed8 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  text-shadow: none !important;
+}
+
+*::-moz-selection,
+::-moz-selection {
+  background-color: #1d4ed8 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  text-shadow: none !important;
+}
+
+html.dark *::selection,
+html.dark ::selection {
+  background-color: #d97706 !important;
+  color: #090d16 !important;
+  -webkit-text-fill-color: #090d16 !important;
+  text-shadow: none !important;
+}
+
+html.dark *::-moz-selection,
+html.dark ::-moz-selection {
+  background-color: #d97706 !important;
+  color: #090d16 !important;
+  -webkit-text-fill-color: #090d16 !important;
+  text-shadow: none !important;
+}
+
+/* ============================================================
+   PAGE INTRO & ENTRANCE ANIMATION SYSTEM
+   ============================================================ */
+
+/* Page shell fade-in – only translates Y, no scale jank */
+@keyframes pageSmoothFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-page-smooth {
+  animation: pageSmoothFadeIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: opacity, transform;
+}
+
+/* Hero section – slides up slightly faster */
+@keyframes heroSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-hero-enter {
+  animation: heroSlideUp 0.72s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Staggered section reveals – driven by IntersectionObserver via JS class toggle */
+@keyframes sectionReveal {
+  from {
+    opacity: 0;
+    transform: translateY(36px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.section-hidden {
+  opacity: 0;
+  transform: translateY(36px);
+}
+
+.section-visible {
+  animation: sectionReveal 0.68s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Card stagger children – first 8 children get progressive delays */
+.section-visible > *:nth-child(1)  { animation-delay: 0ms; }
+.section-visible > *:nth-child(2)  { animation-delay: 60ms; }
+.section-visible > *:nth-child(3)  { animation-delay: 120ms; }
+.section-visible > *:nth-child(4)  { animation-delay: 180ms; }
+.section-visible > *:nth-child(5)  { animation-delay: 240ms; }
+.section-visible > *:nth-child(6)  { animation-delay: 300ms; }
+.section-visible > *:nth-child(7)  { animation-delay: 360ms; }
+.section-visible > *:nth-child(8)  { animation-delay: 420ms; }
+
+/* Fade up for individual cards */
+@keyframes cardFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-card-enter {
+  animation: cardFadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Nav bar slide-down on entry */
+@keyframes navSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-nav-enter {
+  animation: navSlideDown 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Shimmer sweep – used for skeleton loaders */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.08) 50%,
+    rgba(255,255,255,0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s infinite linear;
+}
+
+/* Subtle floating lift for hero badge chips */
+@keyframes floatChip {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-4px); }
+}
+
+.animate-float-chip {
+  animation: floatChip 3.5s ease-in-out infinite;
+}
+
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+.ticker-wrap {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.ticker {
+  display: inline-block;
+  white-space: nowrap;
+  padding-left: 100%;
+  animation: ticker 18s linear infinite;
+}
+
+.ticker:hover {
+  animation-play-state: paused;
+}
+
+@keyframes ticker {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-100%, 0, 0); }
+}
+
+/* Premium ambient backdrop and glow utility */
+.ambient-glow-emerald {
+  background: radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.08), transparent 70%);
+}
+
+.ambient-glow-gold {
+  background: radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.08), transparent 70%);
+}
+
+.ambient-glow-cyan {
+  background: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.08), transparent 70%);
+}
+
+/* ==========================================================================
+   KEYFRAME ANIMATIONS FOR THEME ATMOSPHERES & UX DESIGNS
+   ========================================================================== */
+
+@keyframes execFloat {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-24px) scale(1.04); }
+}
+
+@keyframes execFloatReverse {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(22px) scale(0.97); }
+}
+
+@keyframes cfdPulse {
+  0%, 100% { transform: scale(1) translateY(0); opacity: 0.18; }
+  50% { transform: scale(1.08) translateY(-15px); opacity: 0.28; }
+}
+
+@keyframes cfdStream {
+  0% { stroke-dashoffset: 200; }
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes nordicAurora {
+  0%, 100% { transform: translateX(0) scaleY(1); opacity: 0.16; }
+  50% { transform: translateX(40px) scaleY(1.15); opacity: 0.26; }
+}
+
+@keyframes cyberScanline {
+  0% { top: 0%; opacity: 0; }
+  15% { opacity: 0.5; }
+  85% { opacity: 0.5; }
+  100% { top: 100%; opacity: 0; }
+}
+
+@keyframes cyberPulse {
+  0%, 100% { transform: scale(1); opacity: 0.18; }
+  50% { transform: scale(1.06); opacity: 0.28; }
+}
+
+@keyframes luxuryAura {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.15; }
+  50% { transform: scale(1.07) rotate(2deg); opacity: 0.24; }
+}
+
+@keyframes goldFoilSweep {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.animate-exec-float {
+  animation: execFloat 14s ease-in-out infinite;
+}
+
+.animate-exec-float-reverse {
+  animation: execFloatReverse 16s ease-in-out infinite;
+}
+
+.animate-cfd-pulse {
+  animation: cfdPulse 8s ease-in-out infinite;
+}
+
+.animate-cfd-pulse-delay {
+  animation: cfdPulse 9s ease-in-out infinite 2s;
+}
+
+.animate-cfd-stream-1 {
+  animation: cfdStream 12s linear infinite;
+}
+
+.animate-cfd-stream-2 {
+  animation: cfdStream 16s linear infinite;
+}
+
+.animate-cfd-stream-3 {
+  animation: cfdStream 14s linear infinite;
+}
+
+.animate-nordic-aurora {
+  animation: nordicAurora 12s ease-in-out infinite;
+}
+
+.animate-nordic-aurora-delay {
+  animation: nordicAurora 15s ease-in-out infinite 3s;
+}
+
+.animate-cyber-scanline {
+  animation: cyberScanline 7s ease-in-out infinite;
+}
+
+.animate-cyber-pulse {
+  animation: cyberPulse 7s ease-in-out infinite;
+}
+
+.animate-cyber-pulse-delay {
+  animation: cyberPulse 9s ease-in-out infinite 2s;
+}
+
+.animate-luxury-aura {
+  animation: luxuryAura 12s ease-in-out infinite;
+}
+
+.animate-luxury-aura-delay {
+  animation: luxuryAura 14s ease-in-out infinite 2.5s;
+}
+
+/* ==========================================================================
+   PUBLIC PORTFOLIO UX THEME DESIGNS (6 UNIQUE EXPERIENCES)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Design 1 (current): Executive Reference Match
+   -------------------------------------------------------------------------- */
+[data-theme-design="current"] {
+  --primary-accent: #6366f1;
+  --primary-accent-rgb: 99, 102, 241;
+  --theme-glow: rgba(99, 102, 241, 0.15);
+}
+[data-theme-design="current"].dark {
+  background-color: #080d14 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Design 2: Hybrid Clean Energy & Aerodynamic CFD Flow (Emerald & Cyan)
+   -------------------------------------------------------------------------- */
+[data-theme-design="design-2"] {
+  --primary-accent: #10b981;
+  --primary-accent-rgb: 16, 185, 129;
+  --theme-glow: rgba(16, 185, 129, 0.2);
+}
+[data-theme-design="design-2"]:not(.dark) {
+  background-color: #F8FAFC !important;
+  color: #0f172a;
+}
+[data-theme-design="design-2"].dark {
+  background-color: #080D14 !important;
+  color: #f1f5f9;
+}
+/* Design 2 Fluid Aerodynamic card accents */
+[data-theme-design="design-2"] .card-elevated,
+[data-theme-design="design-2"] article,
+[data-theme-design="design-2"] .group {
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+[data-theme-design="design-2"] .border-indigo-500,
+[data-theme-design="design-2"] .border-indigo-600 {
+  border-color: #10b981 !important;
+}
+[data-theme-design="design-2"] article:hover,
+[data-theme-design="design-2"] .card-elevated:hover {
+  box-shadow: 0 12px 30px -10px rgba(16, 185, 129, 0.25) !important;
+  border-color: rgba(16, 185, 129, 0.5) !important;
+}
+[data-theme-design="design-2"] .section-badge,
+[data-theme-design="design-2"] .badge {
+  border-radius: 9999px !important;
+  border-color: rgba(16, 185, 129, 0.35) !important;
+  color: #10b981 !important;
+}
+/* Design 2 Emerald & Cyan Accent Adaptations for Unrivaled Visual Cohesion */
+[data-theme-design="design-2"] .text-amber-600,
+[data-theme-design="design-2"] .text-amber-700 {
+  color: #059669 !important;
+}
+[data-theme-design="design-2"] .text-amber-500 {
+  color: #10b981 !important;
+}
+[data-theme-design="design-2"].dark .text-amber-400,
+[data-theme-design="design-2"].dark .text-amber-300,
+[data-theme-design="design-2"] .dark\:text-amber-400,
+[data-theme-design="design-2"] .dark\:text-amber-300 {
+  color: #34d399 !important;
+}
+[data-theme-design="design-2"] .bg-amber-50 {
+  background-color: #ecfdf5 !important;
+}
+[data-theme-design="design-2"] .border-amber-200,
+[data-theme-design="design-2"] .border-amber-200\/80,
+[data-theme-design="design-2"] .border-amber-300 {
+  border-color: #6ee7b7 !important;
+}
+[data-theme-design="design-2"].dark .dark\:bg-amber-950\/50,
+[data-theme-design="design-2"].dark .dark\:bg-amber-950\/40 {
+  background-color: rgba(6, 78, 59, 0.45) !important;
+}
+[data-theme-design="design-2"].dark .dark\:border-amber-800\/60,
+[data-theme-design="design-2"].dark .dark\:border-amber-800,
+[data-theme-design="design-2"].dark .dark\:border-amber-400\/30 {
+  border-color: rgba(16, 185, 129, 0.45) !important;
+}
+[data-theme-design="design-2"] .hover\:border-amber-400\/50:hover,
+[data-theme-design="design-2"] .hover\:border-amber-500\/50:hover,
+[data-theme-design="design-2"].dark .dark\:hover\:border-amber-400\/50:hover {
+  border-color: rgba(16, 185, 129, 0.65) !important;
+}
+[data-theme-design="design-2"] .hover\:text-amber-600:hover,
+[data-theme-design="design-2"] .group:hover .group-hover\:text-amber-600 {
+  color: #059669 !important;
+}
+[data-theme-design="design-2"].dark .hover\:text-amber-400:hover,
+[data-theme-design="design-2"].dark .group:hover .dark\:group-hover\:text-amber-400 {
+  color: #34d399 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Design 3: Academic Scholar & Research Editorial
+   -------------------------------------------------------------------------- */
+[data-theme-design="design-3"] {
+  --primary-accent: #4f46e5;
+  --primary-accent-rgb: 79, 70, 229;
+  --theme-glow: rgba(217, 119, 6, 0.15);
+}
+[data-theme-design="design-3"]:not(.dark) {
+  background-color: #F7F5EF !important;
+}
+[data-theme-design="design-3"].dark {
+  background-color: #0b0e17 !important;
+}
+/* Design 3 Classic Editorial Serif Headings & Cards */
+[data-theme-design="design-3"] h1,
+[data-theme-design="design-3"] h2,
+[data-theme-design="design-3"] h3,
+[data-theme-design="design-3"] h4 {
+  font-family: 'Cormorant Garamond', Georgia, serif !important;
+  letter-spacing: 0.015em;
+}
+[data-theme-design="design-3"] .font-serif {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+[data-theme-design="design-3"] article,
+[data-theme-design="design-3"] .card-elevated {
+  border-radius: 8px !important;
+  border-color: rgba(217, 119, 6, 0.25) !important;
+}
+[data-theme-design="design-3"] article:hover,
+[data-theme-design="design-3"] .card-elevated:hover {
+  border-color: rgba(217, 119, 6, 0.55) !important;
+  box-shadow: 0 10px 25px -8px rgba(217, 119, 6, 0.2) !important;
+}
+[data-theme-design="design-3"] .section-badge,
+[data-theme-design="design-3"] .badge {
+  font-family: 'Cormorant Garamond', Georgia, serif !important;
+  border-color: rgba(217, 119, 6, 0.35) !important;
+  color: #fbbf24 !important;
+  border-radius: 4px !important;
+}
+
+/* --------------------------------------------------------------------------
+   Design 4: Nordic Slate Glassmorphism & Arctic Precision
+   -------------------------------------------------------------------------- */
+[data-theme-design="design-4"] {
+  --primary-accent: #0284c7;
+  --primary-accent-rgb: 2, 132, 199;
+  --theme-glow: rgba(56, 189, 248, 0.18);
+}
+[data-theme-design="design-4"]:not(.dark) {
+  background-color: #E3E9F0 !important;
+}
+[data-theme-design="design-4"].dark {
+  background-color: #080d16 !important;
+}
+/* Design 4 Crystalline Glass Depth */
+[data-theme-design="design-4"].dark .bg-slate-900\/90,
+[data-theme-design="design-4"].dark .bg-slate-900\/80,
+[data-theme-design="design-4"].dark .bg-slate-900\/60,
+[data-theme-design="design-4"] article,
+[data-theme-design="design-4"] .card-elevated {
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  background-color: rgba(11, 16, 26, 0.65) !important;
+  border-color: rgba(56, 189, 248, 0.2) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35) !important;
+}
+[data-theme-design="design-4"] article:hover,
+[data-theme-design="design-4"] .card-elevated:hover {
+  border-color: rgba(56, 189, 248, 0.5) !important;
+  box-shadow: 0 12px 36px 0 rgba(56, 189, 248, 0.15) !important;
+}
+[data-theme-design="design-4"] .section-badge,
+[data-theme-design="design-4"] .badge {
+  border-radius: 12px !important;
+  border-color: rgba(56, 189, 248, 0.35) !important;
+  color: #7dd3fc !important;
+}
+
+/* --------------------------------------------------------------------------
+   Design 5: Personal Studio — calm navy, teal & coral
+   -------------------------------------------------------------------------- */
+[data-theme-design="design-5"] {
+  --primary-accent: #0f766e;
+  --primary-accent-rgb: 15, 118, 110;
+  --theme-glow: rgba(20, 184, 166, 0.18);
+}
+[data-theme-design="design-5"]:not(.dark) {
+  background-color: #f4f7f6 !important;
+  color: #122b2b !important;
+}
+[data-theme-design="design-5"].dark {
+  background-color: #081817 !important;
+  color: #ecfdf5 !important;
+}
+[data-theme-design="design-5"] article,
+[data-theme-design="design-5"] .card-elevated {
+  border-radius: 16px !important;
+  border-color: rgba(13, 148, 136, 0.2) !important;
+}
+[data-theme-design="design-5"] article:hover,
+[data-theme-design="design-5"] .card-elevated:hover {
+  border-color: rgba(20, 184, 166, 0.58) !important;
+  box-shadow: 0 14px 32px -12px rgba(13, 148, 136, 0.22), 0 8px 10px -6px rgba(15, 23, 42, 0.14) !important;
+}
+[data-theme-design="design-5"] .section-badge,
+[data-theme-design="design-5"] .badge {
+  border-radius: 9999px !important;
+  border-color: rgba(13, 148, 136, 0.34) !important;
+}
+
+/* Keep the existing portfolio components coherent under the Personal Studio
+   palette. These map the former cobalt utilities to the new, quieter accents. */
+[data-theme-design="design-5"] .text-blue-600,
+[data-theme-design="design-5"] .text-blue-700 { color: #0f766e !important; }
+[data-theme-design="design-5"].dark .dark\:text-blue-200,
+[data-theme-design="design-5"].dark .dark\:text-blue-300,
+[data-theme-design="design-5"].dark .dark\:text-blue-400 { color: #5eead4 !important; }
+[data-theme-design="design-5"] .bg-blue-50 { background-color: #f0fdfa !important; }
+[data-theme-design="design-5"] .bg-blue-100 { background-color: #ccfbf1 !important; }
+[data-theme-design="design-5"] .bg-blue-600 { background-color: #0f766e !important; }
+[data-theme-design="design-5"] .hover\:bg-blue-700:hover { background-color: #115e59 !important; }
+[data-theme-design="design-5"].dark .dark\:bg-blue-950\/40,
+[data-theme-design="design-5"].dark .dark\:bg-blue-950\/60 { background-color: rgba(19, 78, 74, 0.54) !important; }
+[data-theme-design="design-5"].dark .dark\:hover\:bg-blue-900\/50:hover { background-color: rgba(15, 118, 110, 0.5) !important; }
+[data-theme-design="design-5"] .border-blue-200 { border-color: #99f6e4 !important; }
+[data-theme-design="design-5"] .border-blue-400,
+[data-theme-design="design-5"] .border-blue-500\/70,
+[data-theme-design="design-5"] .border-blue-500\/80 { border-color: #2dd4bf !important; }
+[data-theme-design="design-5"].dark .dark\:border-blue-800\/60,
+[data-theme-design="design-5"].dark .dark\:border-blue-900\/40,
+[data-theme-design="design-5"].dark .dark\:border-blue-900\/60 { border-color: rgba(45, 212, 191, 0.34) !important; }
+[data-theme-design="design-5"] .shadow-blue-500\/25 { --tw-shadow-color: rgba(13, 148, 136, 0.25) !important; }
+
+/* A single professional palette across every original-portfolio section. */
+[data-theme-design="design-5"] .text-blue-400,
+[data-theme-design="design-5"] .text-blue-500,
+[data-theme-design="design-5"] .text-blue-800,
+[data-theme-design="design-5"] .text-blue-900 { color: #0f766e !important; }
+[data-theme-design="design-5"] .bg-blue-50\/80,
+[data-theme-design="design-5"] .bg-blue-50\/90 { background-color: rgba(232, 241, 237, 0.9) !important; }
+[data-theme-design="design-5"] .bg-blue-500,
+[data-theme-design="design-5"] .dark\:bg-blue-600 { background-color: #0f766e !important; }
+[data-theme-design="design-5"] .hover\:bg-blue-100:hover { background-color: #d9eee7 !important; }
+[data-theme-design="design-5"] .hover\:bg-blue-700:hover,
+[data-theme-design="design-5"] .dark\:hover\:bg-blue-700:hover { background-color: #115e59 !important; }
+[data-theme-design="design-5"] .border-blue-300,
+[data-theme-design="design-5"] .border-blue-500,
+[data-theme-design="design-5"] .border-blue-600,
+[data-theme-design="design-5"] .border-blue-500\/30,
+[data-theme-design="design-5"] .border-blue-500\/50,
+[data-theme-design="design-5"] .border-blue-500\/60 { border-color: rgba(13, 148, 136, 0.48) !important; }
+[data-theme-design="design-5"] .ring-blue-500\/20 { --tw-ring-color: rgba(13, 148, 136, 0.2) !important; }
+[data-theme-design="design-5"] .focus\:border-blue-500:focus { border-color: #0f766e !important; }
+[data-theme-design="design-5"] .focus\:ring-blue-500:focus { --tw-ring-color: rgba(13, 148, 136, 0.45) !important; }
+[data-theme-design="design-5"].dark .dark\:bg-blue-400\/10,
+[data-theme-design="design-5"].dark .dark\:bg-blue-400\/15,
+[data-theme-design="design-5"].dark .dark\:bg-blue-500\/10,
+[data-theme-design="design-5"].dark .dark\:bg-blue-500\/20 { background-color: rgba(45, 212, 191, 0.11) !important; }
+[data-theme-design="design-5"].dark .dark\:bg-blue-950\/50,
+[data-theme-design="design-5"].dark .dark\:bg-blue-950 { background-color: rgba(19, 78, 74, 0.55) !important; }
+[data-theme-design="design-5"].dark .dark\:border-blue-400\/30,
+[data-theme-design="design-5"].dark .dark\:border-blue-400\/40,
+[data-theme-design="design-5"].dark .dark\:border-blue-500\/30,
+[data-theme-design="design-5"].dark .dark\:border-blue-800\/40,
+[data-theme-design="design-5"].dark .dark\:border-blue-800\/50 { border-color: rgba(94, 234, 212, 0.3) !important; }
+[data-theme-design="design-5"] .hover\:border-blue-300:hover,
+[data-theme-design="design-5"] .hover\:border-blue-400:hover,
+[data-theme-design="design-5"] .hover\:border-blue-500:hover,
+[data-theme-design="design-5"] .hover\:border-blue-400\/50:hover,
+[data-theme-design="design-5"] .hover\:border-blue-500\/50:hover,
+[data-theme-design="design-5"] .hover\:border-blue-500\/60:hover { border-color: #14b8a6 !important; }
+[data-theme-design="design-5"].dark .dark\:hover\:border-blue-400:hover,
+[data-theme-design="design-5"].dark .dark\:hover\:border-blue-400\/50:hover { border-color: #2dd4bf !important; }
+
+/* Opaque cards stay crisp on hover; translucent blur was making text look soft. */
+#public-portfolio-root[data-theme-design="design-5"] main [class*="backdrop-blur"] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   Design 6: Executive Modern Luxury & Pure Minimalist
+   -------------------------------------------------------------------------- */
+[data-theme-design="design-6"] {
+  --primary-accent: #b45309;
+  --primary-accent-rgb: 180, 83, 9;
+  --theme-glow: rgba(180, 83, 9, 0.15);
+}
+[data-theme-design="design-6"].dark {
+  --primary-accent: #d4af37;
+  --primary-accent-rgb: 212, 175, 55;
+  --theme-glow: rgba(212, 175, 55, 0.20);
+}
+
+[data-theme-design="design-6"]:not(.dark) {
+  background-color: #F8F6F0 !important;
+  color: #1c1917 !important;
+}
+[data-theme-design="design-6"].dark {
+  background-color: #09090b !important;
+}
+
+/* Light mode rich luxury contrast */
+[data-theme-design="design-6"]:not(.dark) article,
+[data-theme-design="design-6"]:not(.dark) .card-elevated {
+  background-color: #ffffff !important;
+  border-color: rgba(180, 83, 9, 0.28) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px -2px rgba(120, 53, 15, 0.08) !important;
+}
+[data-theme-design="design-6"]:not(.dark) article:hover,
+[data-theme-design="design-6"]:not(.dark) .card-elevated:hover {
+  border-color: rgba(180, 83, 9, 0.65) !important;
+  box-shadow: 0 12px 32px -4px rgba(180, 83, 9, 0.16) !important;
+}
+[data-theme-design="design-6"]:not(.dark) .section-badge,
+[data-theme-design="design-6"]:not(.dark) .badge {
+  font-family: 'Cormorant Garamond', Georgia, serif !important;
+  letter-spacing: 0.08em !important;
+  border-radius: 6px !important;
+  background-color: #fef3c7 !important;
+  border: 1px solid #f59e0b !important;
+  color: #78350f !important;
+  font-weight: 700 !important;
+}
+
+/* Dark mode Champagne Gold Hairline Accents */
+[data-theme-design="design-6"].dark .border-indigo-500\/30,
+[data-theme-design="design-6"].dark .border-indigo-500\/20,
+[data-theme-design="design-6"].dark article,
+[data-theme-design="design-6"].dark .card-elevated {
+  border-color: rgba(212, 175, 55, 0.25) !important;
+  border-radius: 10px !important;
+}
+[data-theme-design="design-6"].dark article:hover,
+[data-theme-design="design-6"].dark .card-elevated:hover {
+  border-color: rgba(212, 175, 55, 0.6) !important;
+  box-shadow: 0 10px 30px -10px rgba(212, 175, 55, 0.2) !important;
+}
+[data-theme-design="design-6"].dark .section-badge,
+[data-theme-design="design-6"].dark .badge {
+  font-family: 'Cormorant Garamond', Georgia, serif !important;
+  letter-spacing: 0.1em !important;
+  border-radius: 6px !important;
+  background-color: rgba(212, 175, 55, 0.12) !important;
+  border-color: rgba(212, 175, 55, 0.4) !important;
+  color: #fde047 !important;
+}
+
+/* Bulletproof Global Scroll-to-Top Floating Button Guarantees across Mobile, Tablet & Desktop */
+#quick-actions-dock {
+  position: fixed !important;
+  right: 1rem !important;
+  right: calc(1rem + env(safe-area-inset-right, 0px)) !important;
+  bottom: 1.25rem !important;
+  bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px)) !important;
+  z-index: 999999 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transform: translateZ(0) !important;
+  -webkit-transform: translateZ(0) !important;
+  will-change: transform !important;
+}
+
+@media (min-width: 640px) {
+  #quick-actions-dock {
+    right: 1.5rem !important;
+    right: calc(1.5rem + env(safe-area-inset-right, 0px)) !important;
+    bottom: 1.5rem !important;
+    bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+
+

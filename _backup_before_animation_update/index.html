@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem('portfolio_theme');
+          var cached = JSON.parse(localStorage.getItem('portfolio_data_cache_v2') || '{}');
+          var design = cached.themeUX && cached.themeUX.activeDesign || 'design-5';
+          var isReference = design === 'design-7' && !window.location.pathname.startsWith('/admin');
+          var isDark = !isReference && (saved !== null ? saved === 'dark' : true);
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.style.backgroundColor = '#080d14';
+          } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.style.backgroundColor = isReference ? '#b4b4b4' : '#f3f5ef';
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rashedul Islam | Mechanical Engineer</title>
+    <meta name="description" content="Designing, modelling, and field-testing off-grid hybrid renewable energy systems — solar, wind, biogas, and battery — for coastal and resource-constrained communities in Bangladesh." />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=6" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=6" />
+    <link rel="icon" type="image/png" href="/logo-circle.png?v=6" />
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=6" />
+    <!-- Preconnect to Google CDN for instantaneous certificate and media loading -->
+    <link rel="preconnect" href="https://lh3.googleusercontent.com" crossorigin>
+    <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
+    <link rel="preconnect" href="https://drive.google.com">
+    <link rel="dns-prefetch" href="https://drive.google.com">
+  </head>
+  <body class="dark:bg-[#080d14] bg-[#E4E7EB] dark:text-slate-100 text-slate-900 antialiased selection:bg-[#d4af37]/30 selection:text-amber-200">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
