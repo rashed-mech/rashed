@@ -31,12 +31,15 @@ export const handler = async (event: any, context: any) => {
     }
     const serverlessHandler = await handlerPromise;
     return await serverlessHandler(event, context);
-  } catch {
-    console.error('[API] Database initialization failed. Check MongoDB variables, migration and Atlas access.');
+  } catch (err: any) {
+    // Static, non-secret reason code so the real cause is visible in the browser and in Netlify's function logs.
+    const raw = typeof err?.code === 'string' ? err.code : '';
+    const reason = /MONGODB_URI is required/.test(String(err?.message)) ? 'missing-env' : (raw || 'unknown');
+    console.error('[API] Database initialization failed:', reason, '-', err?.message);
     return {
       statusCode: 503,
       headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
-      body: JSON.stringify({success:false, message:'Database unavailable. Check MongoDB configuration and complete the initial data migration.'}),
+      body: JSON.stringify({success:false, reason, message:'Database unavailable. Check MongoDB configuration and complete the initial data migration.'}),
     };
   }
 };
