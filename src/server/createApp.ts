@@ -62,7 +62,8 @@ export async function createApp(db: PortfolioDatabase = defaultDb, scholarLoader
   const verifyAuth = (req: Request, res: Response, next: NextFunction) => authenticate(db, req, res, next);
 
   // Finish the chosen initial snapshot before accepting writes.
-  await db.refresh();
+  // The database constructor already started the first MongoDB read; reuse it instead of reading twice on a cold start.
+  await db.refreshIfStale(15_000);
 
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
@@ -72,13 +73,22 @@ export async function createApp(db: PortfolioDatabase = defaultDb, scholarLoader
   let mutationQueue = Promise.resolve();
   app.use((req: Request, res: Response, next: NextFunction) => {
     if (!req.path.startsWith('/api/')) return next();
+    res.setHeader('Cache-Control', 'no-store');
+    // Public reads do not need to wait behind writes, citation scrapes or each other,
+    // and can reuse a recent MongoDB read (see refreshIfStale).
+    const isPublicRead = req.method === 'GET' && !req.path.startsWith('/api/admin') && !req.path.startsWith('/api/auth');
+    if (isPublicRead) {
+      db.refreshIfStale(15_000).then(() => next()).catch(() => {
+        res.status(503).json({ success: false, message: 'Saved portfolio data is unavailable. Please try again.' });
+      });
+      return;
+    }
     const previous = mutationQueue;
     let release!: () => void;
     mutationQueue = new Promise<void>(resolve => { release = resolve; });
     previous.then(async () => {
       res.once('finish', release);
       res.once('close', release);
-      res.setHeader('Cache-Control', 'no-store');
       await db.refresh();
       next();
     }).catch(() => {
@@ -232,9 +242,11 @@ export async function createApp(db: PortfolioDatabase = defaultDb, scholarLoader
     try {
       await db.waitUntilReady();
       const data = db.getPublicData();
+      // Browsers always revalidate, but the host CDN may serve the public copy for a
+      // short time so visitors do not wake a serverless function and MongoDB each visit.
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-      res.setHeader('Pragma', 'no-cache');
-      res.setHeader('Expires', '0');
+      res.setHeader('Netlify-CDN-Cache-Control', 'public, s-maxage=30, stale-while-revalidate=300');
+      res.setHeader('Vercel-CDN-Cache-Control', 'public, s-maxage=30, stale-while-revalidate=300');
       res.json({ success: true, data });
     } catch (err: any) {
       res.status(500).json({ success: false, message: err.message });

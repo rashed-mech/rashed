@@ -32,6 +32,7 @@ export class PortfolioDatabase {
   private ready: Promise<void>;
   private mongoStore: MongoPortfolioStore | null;
   private localPath: string;
+  private lastLoadedAt = 0;
 
   constructor(localPath = path.resolve(process.cwd(), 'data', 'portfolio.local.json'), mongoStore: MongoPortfolioStore | null = createMongoStore()) {
     this.mongoStore = mongoStore;
@@ -54,6 +55,14 @@ export class PortfolioDatabase {
     await this.flush();
     this.ready = this.loadData();
     await this.ready;
+  }
+
+  // Public reads on a warm serverless instance can reuse the last MongoDB read for a
+  // few seconds instead of fetching the whole document again on every request.
+  public async refreshIfStale(maxAgeMs = 15_000): Promise<void> {
+    await this.ready.catch(() => {});
+    if (this.mongoStore && this.lastLoadedAt && Date.now() - this.lastLoadedAt < maxAgeMs) return;
+    await this.refresh();
   }
 
   public getStorageInfo() {
@@ -103,6 +112,7 @@ export class PortfolioDatabase {
       const saved = await this.mongoStore.read();
       this.data = this.mergeWithDefaults(saved as PortfolioData);
       this.committedData = structuredClone(this.data);
+      this.lastLoadedAt = Date.now();
       return;
     }
     if (process.env.NODE_ENV === 'production') {

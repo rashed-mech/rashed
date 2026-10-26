@@ -35,6 +35,9 @@ export function App() {
   const [data, setData] = useState<PortfolioData>(() => getInitialPortfolioData());
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  // True once the API has answered at least once. A later background refresh that
+  // fails must not put a warning banner on a page that is already showing fine.
+  const hasLoadedOnce = useRef(false);
   const [route, setRoute] = useState<'home' | 'admin'>(() => {
     return window.location.pathname.startsWith('/admin') ? 'admin' : 'home';
   });
@@ -69,12 +72,13 @@ export function App() {
     if (pendingLoad.current) return pendingLoad.current;
     const request = (async () => {
       try {
-        setError(null);
         if (isAdminLoggedIn()) {
           try {
             const adminData = await fetchAdminData();
             setData(adminData);
             setIsAuth(true);
+            hasLoadedOnce.current = true;
+            setError(null);
             return;
           } catch (adminErr) {
             if (isAdminLoggedIn()) throw adminErr;
@@ -84,12 +88,27 @@ export function App() {
           }
         }
 
-        const publicData = await fetchPortfolioData();
-        setData(prev => JSON.stringify(prev) === JSON.stringify(publicData) ? prev : publicData);
+        // A cold serverless start can fail once and succeed a moment later, so retry
+        // quietly before telling the visitor anything.
+        let publicData: PortfolioData | null = null;
+        for (let attempt = 0; attempt < 3 && !publicData; attempt++) {
+          try {
+            publicData = await fetchPortfolioData();
+          } catch (attemptErr) {
+            if (attempt === 2) throw attemptErr;
+            await new Promise(resolve => setTimeout(resolve, 1200 * (attempt + 1)));
+          }
+        }
+        setData(prev => JSON.stringify(prev) === JSON.stringify(publicData) ? prev : publicData!);
         setIsAuth(false);
+        hasLoadedOnce.current = true;
+        setError(null);
       } catch (err: any) {
         console.error('Failed to load portfolio data:', err);
-        setError('Could not refresh the portfolio. Showing the last available snapshot.');
+        // Only warn if the visitor has never received live data.
+        if (!hasLoadedOnce.current) {
+          setError('Could not refresh the portfolio. Showing the last available snapshot.');
+        }
       } finally {
         setLoading(false);
       }
@@ -97,6 +116,13 @@ export function App() {
     pendingLoad.current = request;
     void request.finally(() => { if (pendingLoad.current === request) pendingLoad.current = null; });
     return request;
+  }, []);
+
+  // Never leave the visitor on the spinner for more than a few seconds. The bundled
+  // snapshot is already in state, so show it while the API wakes up.
+  useEffect(() => {
+    const timer = window.setTimeout(() => setLoading(false), 3500);
+    return () => window.clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -107,6 +133,9 @@ export function App() {
       started = true;
       await loadData();
       if (cancelled) return;
+      // Scraping Google Scholar is slow and rate-limited, so it must never run for
+      // ordinary visitors. Only the signed-in owner triggers it.
+      if (!isAdminLoggedIn()) return;
       try {
         await syncScholarCitations();
         if (!cancelled) await loadData();
@@ -114,10 +143,11 @@ export function App() {
         console.warn('Background citation sync failed; keeping saved counts:', err);
       }
     };
-    // The page shows saved data first; scraping happens only after the load event.
     const timer = document.readyState === 'complete' ? window.setTimeout(syncAfterLoad, 0) : undefined;
     window.addEventListener('load', syncAfterLoad, { once: true });
-    const refresh = () => { if (document.visibilityState === 'visible') void loadData(); };
+    // Live refresh is only useful while editing in the admin panel. Public visitors
+    // already receive a cached copy, so polling would just hit the database.
+    const refresh = () => { if (document.visibilityState === 'visible' && isAdminLoggedIn()) void loadData(); };
     const onStorage = (event: StorageEvent) => { if (event.key === 'portfolio_saved_at') refresh(); };
     const poll = window.setInterval(refresh, 30_000);
     window.addEventListener('focus', refresh);

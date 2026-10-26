@@ -4,7 +4,7 @@
   functions = "netlify/functions"
 
 [build.environment]
-  NODE_VERSION = "22"
+  NODE_VERSION = "20"
   NPM_FLAGS = "--include=dev"
   # The isolated MongoDB server is a test dependency, never needed for builds.
   MONGOMS_DISABLE_POSTINSTALL = "true"
