@@ -183,6 +183,38 @@ test('saved data refreshes across instances and citation totals persist consiste
         assert.equal('password' in storage, false);
         const health = await (await fetch(`${base}/api/health`)).json();
         assert.equal('location' in health.storage, false, 'Local paths stay behind admin authentication');
+        assert.equal((await fetch(`${base}/api/admin/research-resume`)).status, 401);
+        assert.equal((await fetch(`${base}/api/research-resume`)).status, 404);
+        const pdf = Buffer.concat([Buffer.from('%PDF-1.4\n% Research resume download test\n'), Buffer.from([0,128,255]), Buffer.from('\n%%EOF\n')]);
+        const upload = await fetch(`${base}/api/admin/research-resume`, {
+          method:'PUT', headers, body:JSON.stringify({fileName:'Research Resume.pdf',dataBase64:pdf.toString('base64')}),
+        });
+        assert.equal(upload.status, 200);
+        const savedResume = (await upload.json()).data;
+        assert.equal(savedResume.fileName, 'Research Resume.pdf');
+        assert.equal(savedResume.size, pdf.length);
+        assert.equal('dataBase64' in savedResume, false);
+        const publicResume = (await (await fetch(`${base}/api/portfolio`)).json()).data.researchResume;
+        assert.equal('dataBase64' in publicResume, false, 'Public page JSON must not carry the full PDF');
+        assert.equal(publicResume.fileName, 'Research Resume.pdf');
+        const downloadable = await fetch(`${base}/api/research-resume`);
+        assert.equal(downloadable.headers.get('content-type'), 'application/pdf');
+        assert.match(downloadable.headers.get('content-disposition')!, /^attachment;/);
+        assert.deepEqual(Buffer.from(await downloadable.arrayBuffer()), pdf);
+        const { default: serverless } = await import('serverless-http');
+        const { serverlessOptions } = await import('./serverlessOptions');
+        const functionDownload: any = await serverless(application, serverlessOptions)({httpMethod:'GET',path:'/api/research-resume',headers:{host:'test.example'},body:null,isBase64Encoded:false,requestContext:{identity:{sourceIp:'127.0.0.1'}}}, {});
+        assert.equal(functionDownload.isBase64Encoded, true, 'Netlify must preserve PDF binary encoding');
+        assert.deepEqual(Buffer.from(functionDownload.body, 'base64'), pdf);
+        const invalidPdf = await fetch(`${base}/api/admin/research-resume`, {method:'PUT',headers,body:JSON.stringify({fileName:'wrong.pdf',dataBase64:Buffer.from('not a PDF').toString('base64')})});
+        assert.equal(invalidPdf.status, 400);
+        const tooLarge = await fetch(`${base}/api/admin/research-resume`, {method:'PUT',headers,body:JSON.stringify({fileName:'large.pdf',dataBase64:'A'.repeat(4*1024*1024+4)})});
+        assert.equal(tooLarge.status, 400);
+        await restarted.refresh();
+        assert.equal(restarted.getResearchResume()?.dataBase64, pdf.toString('base64'), 'PDF persists after a fresh read');
+        const removePdf = await fetch(`${base}/api/admin/research-resume`, {method:'DELETE',headers});
+        assert.equal(removePdf.status, 200);
+        assert.equal((await fetch(`${base}/api/research-resume`)).status, 404);
         const addedResponse = await fetch(`${base}/api/admin/publications`, {
           method: 'POST', headers, body: JSON.stringify({title:'Conference awaiting review', authors:'Owner', category:'Conference', publicationStatus:'Under Review', year:2026, abstract:'', tags:[]}),
         });

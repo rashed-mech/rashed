@@ -1,5 +1,6 @@
 import '../load-env';
 import serverless from 'serverless-http';
+import { serverlessOptions } from '../src/server/serverlessOptions';
 // NOTE: this file is never deployed as-is. The build:netlify step bundles it
 // (and everything it imports) into a single self-contained
 // netlify/functions/api.cjs file, so Netlify never has to resolve any of
@@ -15,7 +16,7 @@ async function buildHandler() {
   if (!process.env.MONGODB_URI?.trim()) throw new Error('MONGODB_URI is required for Netlify.');
   const { createApp } = await import('../src/server/createApp');
   const app = await createApp();
-  return serverless(app);
+  return serverless(app, serverlessOptions);
 }
 
 export const handler = async (event: any, context: any) => {

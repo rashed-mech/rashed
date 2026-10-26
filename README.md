@@ -44,6 +44,12 @@ Content is under the document's `data` field. Login credentials are excluded. Re
 
 Download regular admin JSON backups before imports or major edits. The app reserves a 15 MiB content budget for its MongoDB document; keep large images/files as media URLs instead of embedding them in JSON.
 
+## Uploaded research resume
+
+In **Admin → Researcher Profile → Research Resume PDF**, choose a PDF up to 3 MiB and select **Save Research Resume**. The homepage **Research Resume** button downloads that exact saved PDF. The separate **Download CV** button still generates a CV from portfolio data.
+
+The uploaded PDF is included in private full JSON backups and stored under `data.researchResume` in MongoDB. Public portfolio JSON includes only its filename, size and update time; `/api/research-resume` serves the actual file with attachment download headers. Upload/replace/remove endpoints require admin authentication. Uploaded PDFs survive code deployments, and replacing the file updates downloads without a redeploy.
+
 ## Verification
 
 ```powershell

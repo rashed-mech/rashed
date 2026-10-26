@@ -184,6 +184,8 @@ Do not run the migration as the Netlify build command. It is a one-time, verifie
 6. Submit a test contact message. Confirm it appears in admin, while public `/api/portfolio` does not contain messages or admin credentials.
 7. Trigger another Netlify deployment without migrating again. Confirm the edited data survives. Redeploys replace code and assets; they do not reset MongoDB.
 
+To publish a manually prepared resume, use **Admin → Researcher Profile → Research Resume PDF** to upload and save a PDF (up to 3 MiB). The homepage **Research Resume** button downloads it. This is independent of the automatically generated **Download CV**. The file is stored in MongoDB and included in full admin backups, so replacing or uploading it does not require another deployment.
+
 Citation sync retains saved counts if Google Scholar is temporarily unavailable. Open tabs refresh on focus and periodically while visible; this is polling rather than an instantaneous MongoDB change stream.
 
 ## 12. Troubleshoot and maintain the site

@@ -1,3 +1,4 @@
+import { downloadResearchResume } from '../utils/downloadResearchResume';
 import React, { lazy, Suspense, useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useReducedMotion, type Variants } from 'motion/react';
 import { reveal, cardHover } from '../lib/motion';
@@ -136,6 +137,15 @@ const heroItem: Variants = {
 };
 
 export const Hero: React.FC<HeroProps> = ({ profile, data, activeDesign = 'current' }) => {
+  const [resumeBusy, setResumeBusy] = useState(false);
+  const [resumeError, setResumeError] = useState('');
+  const handleResearchResumeDownload = async () => {
+    setResumeBusy(true);
+    setResumeError('');
+    try { await downloadResearchResume(); }
+    catch (error: any) { setResumeError(error.message || 'The research resume could not be downloaded.'); }
+    finally { setResumeBusy(false); }
+  };
   const [cvBusy, setCvBusy] = useState(false);
   const [cvError, setCvError] = useState('');
   const handleCVDownload = async () => {
@@ -351,10 +361,13 @@ export const Hero: React.FC<HeroProps> = ({ profile, data, activeDesign = 'curre
               </button>
               {cvError && <p role="alert" className="text-xs text-red-600 dark:text-red-400">{cvError}</p>}
 
-              <a
-                href="#contact"
+              <button
+                type="button"
+                onClick={handleResearchResumeDownload}
+                disabled={resumeBusy || !data.researchResume}
+                title={data.researchResume ? "Download research resume PDF" : "Research resume not yet available"}
                 data-magnetic="0.12"
-                className={`btn-shine w-full inline-flex items-center justify-center px-4 py-2.5 text-xs tracking-wider uppercase transition-all text-center cursor-pointer ${
+                className={`btn-shine disabled:opacity-50 disabled:cursor-not-allowed w-full inline-flex items-center justify-center px-4 py-2.5 text-xs tracking-wider uppercase transition-all text-center cursor-pointer ${
                   activeDesign === 'design-2'
                     ? 'rounded-full font-bold bg-[#143e2c] border border-emerald-500/30 hover:bg-[#1b5239] text-emerald-100 shadow-sm hover:scale-[1.02]'
                     : activeDesign === 'design-3'
@@ -368,8 +381,9 @@ export const Hero: React.FC<HeroProps> = ({ profile, data, activeDesign = 'curre
                     : 'rounded-lg font-sans font-bold bg-[#143e2c] hover:bg-[#1b5239] text-white shadow-sm hover:scale-[1.01]'
                 }`}
               >
-                Research Resume
-              </a>
+                {resumeBusy ? 'Downloading...' : 'Research Resume'}
+              </button>
+              {resumeError && <p role="alert" className="text-xs text-red-600 dark:text-red-400">{resumeError}</p>}
 
               {/* Expandable Social Strip — pure CSS, zero JS hover state, single-row flex-nowrap */}
               <div

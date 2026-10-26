@@ -21,6 +21,8 @@ import {
 import portfolioSeedData from '../../data/portfolio_db.json';
 import { publicationStats } from '../utils/publicationStats';
 import { getPublicationStatus } from '../utils/publicationStatus';
+import { resumeMetadata } from './researchResume';
+import type { ResearchResume } from '../types';
 
 const DEFAULT_PORTFOLIO_DATA: PortfolioData = portfolioSeedData as unknown as PortfolioData;
 
@@ -162,7 +164,7 @@ export class PortfolioDatabase {
   }
 
   public getPublicData(): Omit<PortfolioData, 'messages' | 'adminConfig'> {
-    const { messages, adminConfig, profile, ...rest } = this.data;
+    const { messages, adminConfig, profile, researchResume, ...rest } = this.data;
     const publicProfile = { ...profile };
     if (publicProfile.logoUrl === 'chunked') {
       publicProfile.logoUrl = '';
@@ -173,7 +175,17 @@ export class PortfolioDatabase {
     if (publicProfile.avatarUrl && publicProfile.avatarUrl.startsWith('data:')) {
       publicProfile.avatarUrl = '/api/portfolio/avatar';
     }
-    return { ...rest, profile: publicProfile };
+    return { ...rest, profile: publicProfile, researchResume:resumeMetadata(researchResume) };
+  }
+
+  public getResearchResume(): ResearchResume | null {
+    return this.data.researchResume || null;
+  }
+
+  public saveResearchResume(resume: ResearchResume | null) {
+    this.data.researchResume = resume;
+    this.sync();
+    return resumeMetadata(resume);
   }
 
   public updateProfile(updatedProfile: Partial<PortfolioData['profile']>): PortfolioData['profile'] {

@@ -9,6 +9,7 @@ import { db as defaultDb, PortfolioDatabase } from './db.ts';
 import type { Publication } from '../types';
 import { PUBLICATION_STATUSES, getPublicationStatus } from '../utils/publicationStatus';
 import { MongoStorageError } from './mongoStore';
+import { validateResearchResume, resumeMetadata } from './researchResume';
 import { 
   parseBibTeX, 
   scrapeGoogleScholar, 
@@ -106,6 +107,18 @@ export async function createApp(db: PortfolioDatabase = defaultDb, scholarLoader
   });
 
   // --- Public APIs ---
+  app.get('/api/research-resume', (_req: Request, res: Response) => {
+    const resume = db.getResearchResume();
+    if (!resume?.dataBase64) return res.status(404).json({success:false, message:'The research resume is not available yet.'});
+    const filename = resume.fileName.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const encodedFilename = encodeURIComponent(resume.fileName).replace(/['()*]/g, character => `%${character.charCodeAt(0).toString(16).toUpperCase()}`);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"; filename*=UTF-8''${encodedFilename}`);
+    res.setHeader('Cache-Control', 'no-store');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.send(Buffer.from(resume.dataBase64, 'base64'));
+  });
+
   app.get('/api/health', (req: Request, res: Response) => {
     res.json({ status: 'ok', storage: db.getStorageInfo(), timestamp: new Date().toISOString() });
   });
@@ -373,6 +386,22 @@ export async function createApp(db: PortfolioDatabase = defaultDb, scholarLoader
   });
 
   // --- Protected Admin CRUD Endpoints ---
+  app.get('/api/admin/research-resume', verifyAuth, (_req: Request, res: Response) => {
+    res.json({success:true, data:resumeMetadata(db.getResearchResume())});
+  });
+  app.put('/api/admin/research-resume', verifyAuth, (req: Request, res: Response) => {
+    try {
+      const resume = validateResearchResume(req.body);
+      res.json({success:true, data:db.saveResearchResume(resume)});
+    } catch (error: any) {
+      res.status(400).json({success:false, message:error.message});
+    }
+  });
+  app.delete('/api/admin/research-resume', verifyAuth, (_req: Request, res: Response) => {
+    db.saveResearchResume(null);
+    res.json({success:true, data:null});
+  });
+
   app.get('/api/admin/storage', verifyAuth, (_req: Request, res: Response) => {
     res.json({ success: true, data: db.getStorageDetails() });
   });

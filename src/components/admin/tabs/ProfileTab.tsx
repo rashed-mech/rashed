@@ -3,6 +3,7 @@ import { User, Save, Image, Link2, Sparkles, Building, Mail, Phone, MapPin, Awar
 import { Profile } from '../../../types';
 import { updateProfileAPI } from '../../../api';
 import { formatImageUrl } from '../../../utils/formatUrl';
+import { ResearchResumeUploader } from '../ResearchResumeUploader';
 
 interface ProfileTabProps {
   profile: Profile;
@@ -94,6 +95,7 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({ profile, onRefresh, show
         </button>
       </div>
 
+      <ResearchResumeUploader onRefresh={onRefresh} showToast={showToast} />
       <form onSubmit={handleSubmit} className="space-y-6">
 
 

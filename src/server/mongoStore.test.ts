@@ -55,6 +55,12 @@ test('MongoDB persists content, refuses destructive migration, and protects conc
     await first.refresh();
     assert.equal(first.getPublicData().profile.headline, 'Persisted in MongoDB');
     assert.equal(first.getPublicData().projects[0].title, 'Separate section edit');
+    const resume = {fileName:'Research Resume.pdf',size:17,updatedAt:new Date().toISOString(),dataBase64:Buffer.from('%PDF-1.4\n%%EOF').toString('base64')};
+    first.saveResearchResume(resume);
+    await first.flush();
+    await second.refresh();
+    assert.equal(second.getResearchResume()?.dataBase64, resume.dataBase64, 'Research resume survives a new MongoDB read');
+    assert.equal(second.getPublicData().researchResume?.dataBase64, undefined);
     first.addMessage({name:'Visitor',email:'visitor@example.invalid',subject:'Private',message:'Keep this private'});
     await first.flush();
     assert.equal('messages' in first.getPublicData(), false);

@@ -272,7 +272,16 @@ export interface ThemeUXConfig {
   ambientGlow?: boolean;
 }
 
+export interface ResearchResume {
+  fileName: string;
+  size: number;
+  updatedAt: string;
+  /** Included in private backups only; omitted from public portfolio JSON. */
+  dataBase64?: string;
+}
+
 export interface PortfolioData {
+  researchResume?: ResearchResume | null;
   profile: Profile;
   themeUX?: ThemeUXConfig;
   sectionConfig?: SectionConfig;

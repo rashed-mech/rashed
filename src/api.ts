@@ -1,6 +1,26 @@
-import { PortfolioData, Publication, Project, Experience, Education, SkillGroup, Message, Profile, Training, Certification, ThemeUXConfig } from './types';
+import { PortfolioData, Publication, Project, Experience, Education, SkillGroup, Message, Profile, Training, Certification, ThemeUXConfig, ResearchResume } from './types';
 
 const API_BASE = '/api';
+
+export async function fetchResearchResumeMetadata(): Promise<ResearchResume | null> {
+  const response = await authFetch(`${API_BASE}/admin/research-resume`);
+  const result = await response.json();
+  if (!response.ok || !result.success) throw new Error(result.message || 'Could not load the research resume');
+  return result.data;
+}
+
+export async function saveResearchResumePDF(fileName: string, dataBase64: string): Promise<ResearchResume> {
+  const response = await authFetch(`${API_BASE}/admin/research-resume`, {method:'PUT', body:JSON.stringify({fileName, dataBase64})});
+  const result = await response.json();
+  if (!response.ok || !result.success) throw new Error(result.message || 'Could not save the PDF');
+  return result.data;
+}
+
+export async function deleteResearchResumePDF(): Promise<void> {
+  const response = await authFetch(`${API_BASE}/admin/research-resume`, {method:'DELETE'});
+  const result = await response.json();
+  if (!response.ok || !result.success) throw new Error(result.message || 'Could not remove the PDF');
+}
 
 export interface AdminStorageDetails {
   type: string;
