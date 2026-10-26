@@ -1,6 +1,5 @@
-import { TypewriterName } from './TypewriterName';
-import React, { lazy, Suspense, useState } from 'react';
-import { motion, AnimatePresence, type Variants } from 'motion/react';
+import React, { lazy, Suspense, useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, useReducedMotion, type Variants } from 'motion/react';
 import { reveal, cardHover } from '../lib/motion';
 import {
   Sun,
@@ -65,6 +64,67 @@ interface HeroProps {
   data: PortfolioData;
   activeDesign?: UXDesignId;
 }
+
+interface TypewriterExecutiveNameProps {
+  name: string;
+  activeDesign?: UXDesignId;
+}
+
+// Gradient-clipped designs cannot animate per letter (transformed children lose the clip),
+// so they reveal the whole name with a mask instead.
+const GRADIENT_NAME_DESIGNS: UXDesignId[] = ['design-2', 'design-6'];
+
+const TypewriterExecutiveName: React.FC<TypewriterExecutiveNameProps> = React.memo(({ name, activeDesign }) => {
+  const fullName = name || "RASHEDUL ISLAM";
+  const reducedMotion = useReducedMotion();
+  const perLetter = !reducedMotion && !GRADIENT_NAME_DESIGNS.includes(activeDesign as UXDesignId);
+  const words = fullName.split(' ');
+  let letterIndex = 0;
+  return (
+    <h1 aria-label={fullName}
+      className={`hero-name text-4xl sm:text-5xl lg:text-[54px] font-black tracking-tight leading-none inline-flex flex-wrap items-center ${
+        activeDesign === 'design-2' ? 'bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent font-sans' :
+        activeDesign === 'design-3' ? 'font-serif italic dark:text-amber-100 text-slate-900 tracking-wide' :
+        activeDesign === 'design-4' ? 'font-sans dark:text-white text-slate-900 drop-shadow-[0_0_15px_rgba(56,189,248,0.25)]' :
+        activeDesign === 'design-5' ? 'font-sans dark:text-white text-slate-900 tracking-tight' :
+        activeDesign === 'design-6' ? 'font-serif text-[#1e1b18] dark:bg-gradient-to-r dark:from-[#d4af37] dark:via-[#fbf5b7] dark:to-[#aa7c11] dark:bg-clip-text dark:text-transparent tracking-wide' :
+        'font-sans dark:text-white text-black'
+      }`}>
+      {perLetter ? words.map((word, wordIdx) => (
+        <span key={wordIdx} aria-hidden="true" className="hero-name-word">
+          {Array.from(word).map(char => {
+            const i = letterIndex++;
+            return (
+              <span key={i} className="hero-name-mask">
+                <motion.span
+                  className="hero-name-letter"
+                  initial={{ y: '110%', rotate: 8, opacity: 0, filter: 'blur(6px)' }}
+                  animate={{ y: '0%', rotate: 0, opacity: 1, filter: 'blur(0px)' }}
+                  transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.15 + i * 0.035 }}
+                >{char}</motion.span>
+              </span>
+            );
+          })}
+          {wordIdx < words.length - 1 && <span className="hero-name-space">{'\u00A0'}</span>}
+        </span>
+      )) : (
+        <motion.span
+          aria-hidden="true"
+          initial={reducedMotion ? false : { clipPath: 'inset(0 100% 0 0)', opacity: 0.4 }}
+          animate={{ clipPath: 'inset(0 0% 0 0)', opacity: 1 }}
+          transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+        >{fullName}</motion.span>
+      )}
+      <motion.span
+        aria-hidden="true"
+        className={`inline-block w-[3.5px] sm:w-[4.5px] h-[0.78em] ml-1.5 rounded-full ${activeDesign === 'design-5' ? 'bg-teal-600 dark:bg-teal-400' : 'bg-amber-500 dark:bg-amber-400'} animate-pulse`}
+        initial={{ scaleY: 0 }}
+        animate={{ scaleY: 1 }}
+        transition={{ delay: 0.2 + fullName.length * 0.035, duration: 0.4 }}
+      />
+    </h1>
+  );
+});
 
 const heroStagger: Variants = {
   hidden: {},
@@ -432,8 +492,8 @@ export const Hero: React.FC<HeroProps> = ({ profile, data, activeDesign = 'curre
             className="flex-1 space-y-4 text-center lg:text-left"
           >
             
-            <div className="min-h-[48px] sm:min-h-[56px] lg:min-h-[66px] flex items-center justify-center lg:justify-start overflow-visible">
-              <TypewriterName name={profile.name || "RASHEDUL ISLAM"} activeDesign={activeDesign} />
+            <div className="h-[48px] sm:h-[56px] lg:h-[66px] flex items-center justify-center lg:justify-start overflow-visible">
+              <TypewriterExecutiveName name={profile.name || "RASHEDUL ISLAM"} activeDesign={activeDesign} />
             </div>
             {/* Welcome Subtitle with Design Accent Bar */}
             <motion.div 

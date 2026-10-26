@@ -1,12 +1,7 @@
+import { readAdminCredentials, writeLocalAdminCredentials } from './adminEnvironment';
 import fs from 'fs';
 import path from 'path';
-import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
-import { getSecureFirestore } from './secureFirestore';
-import config from '../../firebase-applet-config.json';
-
-const app = initializeApp(config);
-const firestore = getFirestore(app, config.firestoreDatabaseId || '(default)');
+import { createMongoStore, type MongoPortfolioStore } from './mongoStore';
 import { 
   PortfolioData, 
   Publication, 
@@ -27,31 +22,23 @@ import portfolioSeedData from '../../data/portfolio_db.json';
 import { publicationStats } from '../utils/publicationStats';
 import { getPublicationStatus } from '../utils/publicationStatus';
 
-// --- Firebase connection ---
-
-
 const DEFAULT_PORTFOLIO_DATA: PortfolioData = portfolioSeedData as unknown as PortfolioData;
-
-const FIREBASE_DOC_KEYS = [
-  'profile', 'publications', 'projects', 'experience', 'education',
-  'skillGroups', 'trainings', 'certifications', 'achievements',
-  'affiliations', 'volunteerWork', 'references', 'sectionConfig',
-  'pillars', 'metrics', 'messages', 'themeUX'
-];
 
 export class PortfolioDatabase {
   private data: PortfolioData;
   private committedData: PortfolioData;
   private ready: Promise<void>;
-  private secureFirestore = getSecureFirestore();
+  private mongoStore: MongoPortfolioStore | null;
   private localPath: string;
 
-  constructor(localPath = path.resolve(process.cwd(), 'data', 'portfolio.local.json')) {
+  constructor(localPath = path.resolve(process.cwd(), 'data', 'portfolio.local.json'), mongoStore: MongoPortfolioStore | null = createMongoStore()) {
+    this.mongoStore = mongoStore;
     this.localPath = localPath;
-    // Start with seed data in memory; real Firebase data replaces this once loaded.
+    // Seed content is only a development fallback. MongoDB reads replace it before requests are accepted.
     this.data = this.mergeWithDefaults(structuredClone(DEFAULT_PORTFOLIO_DATA));
     this.committedData = structuredClone(this.data);
     this.ready = this.loadData();
+    void this.ready.catch(() => {}); // Requests still await and report initialization failures.
   }
 
   // The chosen snapshot must finish loading before requests can mutate state.
@@ -68,9 +55,9 @@ export class PortfolioDatabase {
   }
 
   public getStorageInfo() {
-    return this.secureFirestore
-      ? { type: 'firestore', projectId: config.projectId, databaseId: config.firestoreDatabaseId || '(default)' }
-      : { type: process.env.NODE_ENV === 'production' ? 'read-only-fallback' : 'local-file' };
+    return this.mongoStore
+      ? { type: 'mongodb', databaseId: this.mongoStore.settings.database, collection: 'portfolio', documentId: 'main' }
+      : { type: process.env.NODE_ENV === 'production' ? 'unconfigured' : 'local-file' };
   }
 
   private mergeWithDefaults(parsed: PortfolioData): PortfolioData {
@@ -110,65 +97,20 @@ export class PortfolioDatabase {
   }
 
   private async loadData(): Promise<void> {
-    try {
-      if (!this.secureFirestore && process.env.NODE_ENV !== 'production' && fs.existsSync(this.localPath)) {
-        const saved = JSON.parse(fs.readFileSync(this.localPath, 'utf8'));
-        this.data = this.mergeWithDefaults(saved);
-        this.committedData = structuredClone(this.data);
-        Object.assign(this.committedData.profile.stats, saved.profile?.stats);
-        return;
-      }
-
-      const readRemote = async (): Promise<Record<string, any>> => {
-        const loaded: Record<string, any> = {};
-        const keys = this.secureFirestore ? FIREBASE_DOC_KEYS : FIREBASE_DOC_KEYS.filter(key => key !== 'messages');
-        await Promise.all(keys.map(async key => {
-          try {
-            if (this.secureFirestore) {
-              const snapshot = await this.secureFirestore.doc(`portfolio/${key}`).get();
-              if (snapshot.exists) loaded[key] = snapshot.data()?.data;
-            } else {
-              const snapshot = await getDoc(doc(firestore, 'portfolio', key));
-              if (snapshot.exists()) loaded[key] = snapshot.data()?.data;
-            }
-          } catch (error) {
-            if (this.secureFirestore) throw error;
-            console.warn(`[Firebase] Could not read ${key}:`, error);
-          }
-        }));
-        if (loaded.profile?.logoUrl === 'chunked') {
-          const chunks = await Promise.all(Array.from({ length: 20 }, async (_, index) => {
-            try {
-              if (this.secureFirestore) {
-                const snapshot = await this.secureFirestore.doc(`portfolio_images/logo_${index}`).get();
-                return snapshot.exists ? snapshot.data() : null;
-              }
-              const snapshot = await getDoc(doc(firestore, 'portfolio_images', `logo_${index}`));
-              return snapshot.exists() ? snapshot.data() : null;
-            } catch { return null; }
-          }));
-          loaded.profile.logoUrl = chunks.filter(Boolean).sort((a, b) => a.index - b.index).map(chunk => chunk.data).join('');
-        }
-        return loaded;
-      };
-
-      let deadline: ReturnType<typeof setTimeout> | undefined;
-      const loaded = await Promise.race([
-        readRemote(),
-        new Promise<null>(resolve => { deadline = setTimeout(() => resolve(null), 5000); })
-      ]);
-      clearTimeout(deadline);
-      if (loaded === null) {
-        if (this.secureFirestore) throw new Error('Initial Firestore read timed out. Refusing to serve an unsynchronized portfolio.');
-        console.warn('[Firebase] Initial read timed out. Using the bundled portfolio snapshot for this process.');
-        return;
-      }
-      if (Object.keys(loaded).length > 0) this.data = this.mergeWithDefaults(loaded as PortfolioData);
+    if (this.mongoStore) {
+      const saved = await this.mongoStore.read();
+      this.data = this.mergeWithDefaults(saved as PortfolioData);
       this.committedData = structuredClone(this.data);
-      Object.assign(this.committedData.profile.stats, loaded.profile?.stats);
-    } catch (error) {
-      console.error('Could not load portfolio data:', error);
-      if (this.secureFirestore || fs.existsSync(this.localPath)) throw error;
+      return;
+    }
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('MONGODB_URI is required for production. Configure MongoDB and run npm run db:migrate.');
+    }
+    if (fs.existsSync(this.localPath)) {
+      const saved = JSON.parse(fs.readFileSync(this.localPath, 'utf8'));
+      this.data = this.mergeWithDefaults(saved);
+      this.committedData = structuredClone(this.data);
+      Object.assign(this.committedData.profile.stats, saved.profile?.stats);
     }
   }
 
@@ -179,31 +121,14 @@ export class PortfolioDatabase {
     const snapshot = structuredClone(this.data);
     const previousWrite = this.pendingWrite;
     this.pendingWrite = previousWrite.then(async () => {
-      if (this.secureFirestore) {
-        const batch = this.secureFirestore.batch();
-        const persistable = JSON.parse(JSON.stringify(snapshot)) as PortfolioData;
-        const logo = persistable.profile.logoUrl;
-        if (logo && logo.length > 500000) {
-          persistable.profile.logoUrl = 'chunked';
-          for (let index = 0; index < Math.ceil(logo.length / 500000); index++) {
-            batch.set(this.secureFirestore.doc(`portfolio_images/logo_${index}`), {
-              data: logo.slice(index * 500000, (index + 1) * 500000), index
-            });
-          }
-        }
-        for (const [key, value] of Object.entries(persistable)) {
-          // Do not overwrite unrelated sections from another server instance.
-          if (key !== 'adminConfig' && JSON.stringify(value) !== JSON.stringify((this.committedData as any)[key])) {
-            batch.set(this.secureFirestore.doc(`portfolio/${key}`), { data: value });
-          }
-        }
-        await batch.commit();
+      if (this.mongoStore) {
+        await this.mongoStore.writeChanges(snapshot, this.committedData);
       } else if (process.env.NODE_ENV !== 'production') {
         const temporaryPath = `${this.localPath}.tmp`;
         await fs.promises.writeFile(temporaryPath, JSON.stringify(snapshot), 'utf8');
         await fs.promises.rename(temporaryPath, this.localPath);
       } else {
-        throw new Error('Server-side Firestore credentials are required for portfolio writes.');
+        throw new Error('MONGODB_URI is required for production portfolio writes.');
       }
       this.committedData = snapshot;
     }).catch(error => {
@@ -275,43 +200,21 @@ export class PortfolioDatabase {
   }
 
   private getAdminCredentialsFromEnv(): { username: string; password: string } {
-    let username = (process.env.ADMIN_USERNAME || process.env.ADMIN_USER || '').trim();
-    let password = (process.env.ADMIN_PASSWORD || process.env.ADMIN_PASS || '').trim();
+    return readAdminCredentials();
+  }
 
-    // Dynamically reload from .env / .env.local on each attempt so manual changes in .env take effect immediately
-    try {
-      const envFiles = ['.env', '.env.local'];
-      for (const file of envFiles) {
-        const fullPath = path.resolve(process.cwd(), file);
-        if (fs.existsSync(fullPath)) {
-          const content = fs.readFileSync(fullPath, 'utf-8');
-          content.split(/\r?\n/).forEach(line => {
-            const trimmed = line.trim();
-            if (!trimmed || trimmed.startsWith('#')) return;
-            const match = trimmed.match(/^([^=]+)=(.*)$/);
-            if (match) {
-              const key = match[1].trim();
-              let val = match[2].trim();
-              if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
-                val = val.slice(1, -1);
-              }
-              if (key === 'ADMIN_USERNAME' || key === 'ADMIN_USER') {
-                username = val.trim();
-                process.env.ADMIN_USERNAME = username;
-              }
-              if (key === 'ADMIN_PASSWORD' || key === 'ADMIN_PASS') {
-                password = val.trim();
-                process.env.ADMIN_PASSWORD = password;
-              }
-            }
-          });
-        }
-      }
-    } catch (e: any) {
-      console.warn('[Auth] Failed to dynamically read .env file:', e.message);
-    }
-
-    return { username, password };
+  public getStorageDetails() {
+    const credentials = readAdminCredentials();
+    return {
+      ...this.getStorageInfo(),
+      location: this.mongoStore ? `${this.mongoStore.settings.database}.portfolio / document main` : process.env.NODE_ENV === 'production' ? 'MongoDB is not configured' : this.localPath,
+      fallbackPath: path.resolve(process.cwd(), 'data', 'portfolio_db.json'),
+      mongoConfigured: !!this.mongoStore,
+      postgresConfigured: !!process.env.DATABASE_URL,
+      postgresUsed: false,
+      adminUsername: credentials.username,
+      credentialSources: credentials.sources,
+    };
   }
 
   public getAdminConfig() {
@@ -326,7 +229,7 @@ export class PortfolioDatabase {
     const { username: expectedUsername, password: expectedPassword } = this.getAdminCredentialsFromEnv();
 
     if (!expectedUsername || !expectedPassword) {
-      console.warn('[Auth] ADMIN_USERNAME or ADMIN_PASSWORD is not set in environment variables (.env).');
+      console.warn('[Auth] ADMIN_USERNAME or ADMIN_PASSWORD is not set in server variables or .env.local.');
       return false;
     }
 
@@ -360,29 +263,9 @@ export class PortfolioDatabase {
       throw new Error('Change admin credentials in your hosting provider environment settings.');
     }
 
-      const envPath = path.resolve(process.cwd(), '.env');
-      let envContent = '';
-      if (fs.existsSync(envPath)) {
-        envContent = fs.readFileSync(envPath, 'utf-8');
-      }
-
-      if (/^ADMIN_USERNAME=/m.test(envContent)) {
-        envContent = envContent.replace(/^ADMIN_USERNAME=.*/m, `ADMIN_USERNAME=${username.trim()}`);
-      } else {
-        envContent += `\nADMIN_USERNAME=${username.trim()}`;
-      }
-
-      if (passwordHashOrPlain) {
-        if (/^ADMIN_PASSWORD=/m.test(envContent)) {
-          envContent = envContent.replace(/^ADMIN_PASSWORD=.*/m, `ADMIN_PASSWORD=${passwordHashOrPlain}`);
-        } else {
-          envContent += `\nADMIN_PASSWORD=${passwordHashOrPlain}`;
-        }
-      }
-
-      fs.writeFileSync(envPath, envContent.trim() + '\n', 'utf-8');
-      process.env.ADMIN_USERNAME = username.trim();
-      if (passwordHashOrPlain) process.env.ADMIN_PASSWORD = passwordHashOrPlain;
+    writeLocalAdminCredentials(username, passwordHashOrPlain);
+    process.env.ADMIN_USERNAME = username.trim();
+    if (passwordHashOrPlain !== undefined) process.env.ADMIN_PASSWORD = passwordHashOrPlain;
 
     return true;
   }

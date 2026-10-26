@@ -1,36 +1,58 @@
 # Rashedul Islam portfolio
 
-React, TypeScript, Vite, and Tailwind serve the portfolio. The Node/Express API serves content, admin editing, and the contact form. The original design presets and interactive turbine lab remain available.
+React, TypeScript, Vite and Tailwind serve the portfolio; the Express API runs locally or as a Netlify function. MongoDB Atlas stores shared portfolio content, publication status/order, citations, settings and private contact messages.
 
-## Run locally
+## Deploy to Netlify
 
-1. Run `npm install`.
-2. Copy `.env.example` to `.env` and set `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and a random `JWT_SECRET` of at least 32 characters. Keep `.env` private.
-3. Run `npm run dev` and open `http://localhost:3000`.
+Follow the full [MongoDB Atlas and Netlify deployment guide](docs/NETLIFY_MONGODB_DEPLOYMENT.md), including Atlas setup, private variables, one-time migration, build settings and live verification.
 
-Without server-side Firebase credentials, development reads public Firestore portfolio documents and stores edits and contact messages in the ignored `data/portfolio.local.json` file. A local file takes precedence on restart. To test the production storage path locally, configure `FIREBASE_SERVICE_ACCOUNT_JSON` or `GOOGLE_APPLICATION_CREDENTIALS` instead. Do not place a service account in source files or any `VITE_` variable.
+```text
+Browser -> Netlify /api function -> MongoDB Atlas
+```
 
-`npm run lint` checks types; `npm run build` builds the browser and server. `npm run build:netlify` and `npm run build:vercel` create the deployment bundles.
+The build command is `npm run build:netlify`, publish directory `dist`, and functions directory `netlify/functions`. The generated function is `api.cjs` (CommonJS). `.nvmrc` and `netlify.toml` select Node.js 22.
 
-## Deploy securely
+## Local setup
 
-1. Set `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and a unique `JWT_SECRET` (at least 32 characters) in your hosting provider's private environment variables.
-2. Give the server a service account for the Firebase project in `firebase-applet-config.json`. Set `FIREBASE_SERVICE_ACCOUNT_JSON` to the complete one-line service-account JSON, or configure application default credentials and set `FIREBASE_USE_APPLICATION_DEFAULT_CREDENTIALS=true`. The service account must be authorized to read and write the named Firestore database.
-3. Deploy the application with these variables, then apply `firestore.rules` to the named Firestore database. The rules allow visitors to read public portfolio documents while denying direct client writes and reads of contact messages. Admin SDK calls bypass Firestore client rules.
-4. Confirm that `/api/health` responds, public content loads, and an admin edit persists after a cold restart. A missing server credential causes writes to return HTTP 503 instead of reporting a false success.
+1. Run `npm ci`.
+2. Fill in `.env.local`, using `.env.example` as a reference. Preserve existing credentials when editing an existing file.
+3. Set `MONGODB_URI`, `MONGODB_DB=rashed_portfolio`, `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and a random `JWT_SECRET` of at least 32 characters.
+4. For a new empty database, copy data once: `npm run db:migrate -- --from data/portfolio.local.json`. Use a fresh full admin JSON export instead if it contains newer data. An existing MongoDB portfolio is never overwritten by this command.
+5. Run `npm run db:check`, then `npm run dev`. Open `http://localhost:4000` when `PORT=4000` is set in `.env.local`.
 
-The saved rules file does **not** change the live Firebase rules until you deploy it. Apply it promptly after configuring the server credential. Restrict or rotate any previously exposed credentials through your hosting provider as needed.
+Migration verifies the copy and leaves the source file untouched. Once configured, the server reads MongoDB instead of the local JSON file. A failed database read/write does not switch back to JSON.
 
-The bundled `data/portfolio_db.json` is only a display fallback for unauthenticated public reads. With server credentials configured, a failed or slow initial Firestore read stops startup rather than accepting edits against stale data.
+## Environment and login
 
-Large dependencies load as needed: the PDF generator loads when a CV is requested, and the engineering lab loads as the visitor approaches it. The hero 3D model is split into its own browser chunk.
+Development loads `.env` and then `.env.local`; the latter overrides defaults. Admin logins reread these files with dotenv parsing. Local credential changes through the admin are saved to `.env.local`.
 
-## Saved data and citation updates
+Production uses Netlify's private hosting variables. Database, admin and JWT variables need Functions scope. Never prefix secrets with `VITE_`. `VITE_SITE_URL` is an optional public Build-scope URL for CV links. Local dotenv files are not deployed. Change production credentials in Netlify and redeploy.
 
-The local development server currently saves edits in `data/portfolio.local.json` unless server-side Firebase credentials are configured. With credentials, it uses the Firestore project and named database in `firebase-applet-config.json`, under `portfolio/{section}` (for example `portfolio/profile` and `portfolio/publications`). `data/portfolio_db.json` is a bundled display fallback, not the live database. `/api/health` identifies the storage mode without exposing credentials.
+`DATABASE_URL`, `DATABASE_URL_POOLED`, old Firebase credentials, `firebase-applet-config.json`, and `firestore.rules` are not active MongoDB storage configuration. Old Firebase configuration files are retained only for reference.
 
-Every API request refreshes its snapshot from the configured storage. Firestore saves write changed sections only, so an unrelated edit cannot overwrite other sections from a stale server instance. Concurrent edits to the same section still use last-write-wins semantics.
+## Where data is saved
 
-Every page load requests saved portfolio data without browser caching. Open tabs refresh when focused, every 30 seconds while visible, and when another tab on the same origin saves an admin change. After the page load event, the browser requests a background Scholar synchronization. The server uses only the saved owner's Scholar profile, matches paper titles, and saves paper citations and the derived total/h-index together before returning success. All components and JSON exports use these saved paper counts; component-specific live overrides have been removed.
+| Configuration | Active storage |
+| --- | --- |
+| `MONGODB_URI` configured | Database from `MONGODB_DB` (default `rashed_portfolio`), collection `portfolio`, document `_id: main` |
+| No URI in local development | Ignored `data/portfolio.local.json`; `data/portfolio_db.json` is the initial development fallback |
+| No URI in production | API initialization/saving fails; no temporary serverless-file database is used |
 
-Scholar results are shared within a server instance for five minutes. Unreachable profiles back off for 30 minutes and retain saved counts; missing or unmatched papers are never reset. This is periodic synchronization, not a continuous Scholar connection. The summary represents papers in this portfolio, which can differ from a Scholar profile containing additional papers.
+Content is under the document's `data` field. Login credentials are excluded. Related changes are saved atomically, and per-section version checks reject stale edits instead of overwriting newer edits. Every API request refreshes its saved snapshot. Public responses omit contact messages and legacy admin credentials.
+
+**Admin -> Security & DB** shows active storage and credential sources. `/api/health` reports the storage type; protected `/api/admin/storage` supplies details without exposing the URI/password.
+
+Download regular admin JSON backups before imports or major edits. The app reserves a 15 MiB content budget for its MongoDB document; keep large images/files as media URLs instead of embedding them in JSON.
+
+## Verification
+
+```powershell
+npm run lint
+npm test
+npm run db:check
+npm run build:netlify
+```
+
+Tests use an isolated MongoDB test server, not Atlas. Its binary may be downloaded on the first run; Netlify builds skip this test-only download.
+
+The frontend reloads saved content on page load, focus, and periodically while visible. Background Scholar sync saves published-paper citations and summary statistics, preserves pending manual papers, and retains counts when Scholar is unavailable. This is periodic synchronization rather than a database change stream.

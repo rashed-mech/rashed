@@ -8,6 +8,7 @@ import * as cheerio from 'cheerio';
 import { db as defaultDb, PortfolioDatabase } from './db.ts';
 import type { Publication } from '../types';
 import { PUBLICATION_STATUSES, getPublicationStatus } from '../utils/publicationStatus';
+import { MongoStorageError } from './mongoStore';
 import { 
   parseBibTeX, 
   scrapeGoogleScholar, 
@@ -92,10 +93,11 @@ export async function createApp(db: PortfolioDatabase = defaultDb, scholarLoader
       if (!['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) return originalJson(body);
       db.flush()
         .then(() => originalJson(body))
-        .catch(() => {
+        .catch((error) => {
           if (!res.headersSent) {
-            res.status(503);
-            originalJson({ success: false, message: 'Changes could not be saved. Please try again.' });
+            const conflict = error instanceof MongoStorageError && error.code === 'conflict';
+            res.status(conflict ? 409 : 503);
+            originalJson({ success: false, message: conflict ? error.message : 'Changes could not be saved. Please try again.' });
           }
         });
       return res;
@@ -371,6 +373,10 @@ export async function createApp(db: PortfolioDatabase = defaultDb, scholarLoader
   });
 
   // --- Protected Admin CRUD Endpoints ---
+  app.get('/api/admin/storage', verifyAuth, (_req: Request, res: Response) => {
+    res.json({ success: true, data: db.getStorageDetails() });
+  });
+
   app.get('/api/admin/data', verifyAuth, (req: Request, res: Response) => {
     try {
       const fullData = db.getFullData();

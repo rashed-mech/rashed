@@ -1,9 +1,8 @@
 import '../load-env';
 import serverless from 'serverless-http';
-import { createApp } from '../src/server/createApp';
 // NOTE: this file is never deployed as-is. The build:netlify step bundles it
 // (and everything it imports) into a single self-contained
-// netlify/functions/api.js file, so Netlify never has to resolve any of
+// netlify/functions/api.cjs file, so Netlify never has to resolve any of
 // these relative imports at runtime.
 
 // Netlify keeps this module cached across invocations on the same warm
@@ -13,19 +12,30 @@ import { createApp } from '../src/server/createApp';
 let handlerPromise: ReturnType<typeof buildHandler> | null = null;
 
 async function buildHandler() {
+  if (!process.env.MONGODB_URI?.trim()) throw new Error('MONGODB_URI is required for Netlify.');
+  const { createApp } = await import('../src/server/createApp');
   const app = await createApp();
   return serverless(app);
 }
 
 export const handler = async (event: any, context: any) => {
-  if (!handlerPromise) {
-    handlerPromise = buildHandler().catch((err) => {
-      // If startup fails (e.g. a transient DB hiccup), don't cache the
-      // failure forever — let the next request try building the app again.
-      handlerPromise = null;
-      throw err;
-    });
+  context.callbackWaitsForEmptyEventLoop = false;
+  try {
+    if (!handlerPromise) {
+      handlerPromise = buildHandler().catch((err) => {
+        // Let the next request retry after a transient database failure.
+        handlerPromise = null;
+        throw err;
+      });
+    }
+    const serverlessHandler = await handlerPromise;
+    return await serverlessHandler(event, context);
+  } catch {
+    console.error('[API] Database initialization failed. Check MongoDB variables, migration and Atlas access.');
+    return {
+      statusCode: 503,
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
+      body: JSON.stringify({success:false, message:'Database unavailable. Check MongoDB configuration and complete the initial data migration.'}),
+    };
   }
-  const serverlessHandler = await handlerPromise;
-  return serverlessHandler(event, context);
 };

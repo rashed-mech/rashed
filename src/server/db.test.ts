@@ -7,6 +7,7 @@ import seed from '../../data/portfolio_db.json';
 
 test('saved data refreshes across instances and citation totals persist consistently', async () => {
   const originalMode = process.env.NODE_ENV;
+  const originalMongoUri = process.env.MONGODB_URI;
   const originalServiceAccount = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
   const originalGoogleCredentials = process.env.GOOGLE_APPLICATION_CREDENTIALS;
   const originalDefaultCredentials = process.env.FIREBASE_USE_APPLICATION_DEFAULT_CREDENTIALS;
@@ -18,11 +19,12 @@ test('saved data refreshes across instances and citation totals persist consiste
 
   try {
     process.env.NODE_ENV = 'development';
+    delete process.env.MONGODB_URI;
     delete process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
     delete process.env.GOOGLE_APPLICATION_CREDENTIALS;
     delete process.env.FIREBASE_USE_APPLICATION_DEFAULT_CREDENTIALS;
     const { PortfolioDatabase } = await import('./db');
-    const database = new PortfolioDatabase(localFile);
+    const database = new PortfolioDatabase(localFile, null);
     await database.waitUntilReady();
 
     database.updateProfile({ name: 'Saved locally' });
@@ -35,7 +37,7 @@ test('saved data refreshes across instances and citation totals persist consiste
     database.updateThemeUX({ activeDesign: 'design-7' });
     await database.flush();
 
-    const restarted = new PortfolioDatabase(localFile);
+    const restarted = new PortfolioDatabase(localFile, null);
     await restarted.waitUntilReady();
     assert.equal(restarted.getFullData().profile.name, 'Saved locally');
     assert.equal(restarted.getMessages().length, 1);
@@ -46,7 +48,7 @@ test('saved data refreshes across instances and citation totals persist consiste
 
     process.env.NODE_ENV = 'production';
     restarted.updateProfile({ name: 'Unsaved change' });
-    await assert.rejects(restarted.flush(), /credentials are required/);
+    await assert.rejects(restarted.flush(), /MONGODB_URI is required/);
     assert.equal(restarted.getFullData().profile.name, 'Saved locally');
     assert.equal(JSON.parse(fs.readFileSync(localFile, 'utf8')).profile.name, 'Saved locally');
 
@@ -100,7 +102,7 @@ test('saved data refreshes across instances and citation totals persist consiste
       assert.equal('messages' in initialData, false);
 
       // A warm instance must see changes saved by a different instance.
-      const otherInstance = new PortfolioDatabase(localFile);
+      const otherInstance = new PortfolioDatabase(localFile, null);
       await otherInstance.waitUntilReady();
       otherInstance.updateProfile({ headline: 'Saved by another server instance' });
       await otherInstance.flush();
@@ -158,6 +160,7 @@ test('saved data refreshes across instances and citation totals persist consiste
       assert.equal(restarted.getFullData().profile.stats.hIndex, 1);
 
       const { getPublicationStatus } = await import('../utils/publicationStatus');
+      assert.equal((await fetch(`${base}/api/admin/storage`)).status, 401);
       assert.equal(getPublicationStatus({ category: 'Journal', venue: 'Submitted' }), 'Submitted');
       assert.equal(getPublicationStatus({ category: 'Conference', statusNote: 'Under Review' }), 'Under Review');
       assert.equal(getPublicationStatus({ publicationStatus: 'Published', venue: 'Submitted' }), 'Published');
@@ -172,6 +175,14 @@ test('saved data refreshes across instances and citation totals persist consiste
         })).json();
         assert.equal(login.success, true);
         const headers = {'Content-Type':'application/json', Authorization: `Bearer ${login.token}`};
+        const storageResponse = await fetch(`${base}/api/admin/storage`, { headers });
+        assert.equal(storageResponse.status, 200);
+        const storage = (await storageResponse.json()).data;
+        assert.equal(storage.type, 'local-file');
+        assert.equal(storage.location, localFile);
+        assert.equal('password' in storage, false);
+        const health = await (await fetch(`${base}/api/health`)).json();
+        assert.equal('location' in health.storage, false, 'Local paths stay behind admin authentication');
         const addedResponse = await fetch(`${base}/api/admin/publications`, {
           method: 'POST', headers, body: JSON.stringify({title:'Conference awaiting review', authors:'Owner', category:'Conference', publicationStatus:'Under Review', year:2026, abstract:'', tags:[]}),
         });
@@ -217,7 +228,7 @@ test('saved data refreshes across instances and citation totals persist consiste
       assert.equal(imported.data.publications.at(-1).publicationStatus, 'Published');
       const again = await (await fetch(`${base}/api/scholar/sync`, {method:'POST'})).json();
       assert.equal(again.changed, false, 'Repeated sync must not duplicate papers');
-      const reloaded = new PortfolioDatabase(localFile);
+      const reloaded = new PortfolioDatabase(localFile, null);
       await reloaded.waitUntilReady();
       assert.equal(reloaded.getPublications().find(paper => paper.id === pending.id)?.publicationStatus, 'Submitted');
       assert.deepEqual(reloaded.getPublications().slice(0, order.length).map(paper => paper.id), order);
@@ -226,8 +237,7 @@ test('saved data refreshes across instances and citation totals persist consiste
       await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
     }
   } finally {
-    const { getApps, deleteApp } = await import('firebase/app');
-    await Promise.all(getApps().map(app => deleteApp(app)));
+    if (originalMongoUri === undefined) delete process.env.MONGODB_URI; else process.env.MONGODB_URI = originalMongoUri;
     if (originalMode === undefined) delete process.env.NODE_ENV; else process.env.NODE_ENV = originalMode;
     if (originalServiceAccount === undefined) delete process.env.FIREBASE_SERVICE_ACCOUNT_JSON; else process.env.FIREBASE_SERVICE_ACCOUNT_JSON = originalServiceAccount;
     if (originalGoogleCredentials === undefined) delete process.env.GOOGLE_APPLICATION_CREDENTIALS; else process.env.GOOGLE_APPLICATION_CREDENTIALS = originalGoogleCredentials;

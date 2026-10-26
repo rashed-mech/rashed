@@ -2,6 +2,28 @@ import { PortfolioData, Publication, Project, Experience, Education, SkillGroup,
 
 const API_BASE = '/api';
 
+export interface AdminStorageDetails {
+  type: string;
+  location: string;
+  fallbackPath: string;
+  projectId?: string;
+  databaseId?: string;
+  collection?: string;
+  documentId?: string;
+  mongoConfigured: boolean;
+  postgresConfigured: boolean;
+  postgresUsed: boolean;
+  adminUsername: string;
+  credentialSources: { username: string; password: string };
+}
+
+export async function fetchAdminStorage(): Promise<AdminStorageDetails> {
+  const response = await authFetch(`${API_BASE}/admin/storage`);
+  const result = await response.json();
+  if (!response.ok || !result.success) throw new Error(result.message || 'Storage status unavailable');
+  return result.data;
+}
+
 export async function reorderPublicationsAPI(orderedIds: string[]): Promise<Publication[]> {
   const res = await authFetch(`${API_BASE}/admin/publications/reorder`, {
     method: 'PUT', body: JSON.stringify({ orderedIds }),

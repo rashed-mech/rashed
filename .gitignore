@@ -2,6 +2,15 @@ node_modules/
 dist/
 .env
 .env.local
+.env.*
+!.env.example
+_backup_before_animation_update/
+portfolio_backup_*.json
+output/
 data/portfolio.local.json
 data/portfolio.local.json.tmp
 .reference/
+.netlify/
+.verification/
+netlify/functions/api.js
+netlify/functions/api.cjs

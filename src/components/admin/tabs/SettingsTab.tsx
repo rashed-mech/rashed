@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   KeyRound, 
   Database, 
@@ -12,7 +12,7 @@ import {
   Lock
 , Eye, EyeOff } from 'lucide-react';
 import { PortfolioData } from '../../../types';
-import { updateAdminCredentials, resetDatabaseAPI, importDatabaseAPI, fetchAdminData } from '../../../api';
+import { updateAdminCredentials, resetDatabaseAPI, importDatabaseAPI, fetchAdminData, fetchAdminStorage, type AdminStorageDetails } from '../../../api';
 
 interface SettingsTabProps {
   data: PortfolioData;
@@ -22,7 +22,16 @@ interface SettingsTabProps {
 
 export const SettingsTab: React.FC<SettingsTabProps> = ({ data, onRefresh, showToast }) => {
   // Admin credentials state
-  const [newUsername, setNewUsername] = useState('admin');
+  const [newUsername, setNewUsername] = useState('');
+  const [storage, setStorage] = useState<AdminStorageDetails | null>(null);
+  const [storageError, setStorageError] = useState('');
+  useEffect(() => {
+    let mounted = true;
+    fetchAdminStorage().then(details => {
+      if (mounted) { setStorage(details); setNewUsername(details.adminUsername); }
+    }).catch(error => { if (mounted) setStorageError(error.message); });
+    return () => { mounted = false; };
+  }, []);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [authLoading, setAuthLoading] = useState(false);
@@ -119,6 +128,17 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({ data, onRefresh, showT
       </div>
 
       {/* Grid: Credentials + Database Management */}
+      <div className="p-6 rounded-2xl bg-slate-800/90 border border-slate-700/80 space-y-3">
+        <h3 className="text-base font-bold text-white flex items-center gap-2"><Database className="w-4 h-4" />Current Data Storage</h3>
+        {storage ? <dl className="text-sm text-slate-300 space-y-2">
+          <div><dt className="font-semibold text-white">Saving to</dt><dd>{storage.type === 'mongodb' ? 'MongoDB' : storage.type === 'local-file' ? 'Local JSON file (MongoDB not configured)' : 'MongoDB is not configured'}</dd></div>
+          <div><dt className="font-semibold text-white">Location</dt><dd className="break-all font-mono text-xs">{storage.location}</dd></div>
+          {storage.type === 'mongodb' && <div><dt className="font-semibold text-white">Database / collection / document</dt><dd className="break-all">{storage.databaseId} / {storage.collection} / {storage.documentId}</dd></div>}
+          <div><dt className="font-semibold text-white">Login credentials</dt><dd>Username: {storage.credentialSources.username}; password: {storage.credentialSources.password}. Local credential changes are saved in .env.local.</dd></div>
+          {storage.postgresConfigured && !storage.postgresUsed && <p className="text-amber-300">DATABASE_URL is configured, but this application currently does not use PostgreSQL. Your saved edits are in the location shown above.</p>}
+          <p className="text-xs text-slate-400">Set private server variables MONGODB_URI and MONGODB_DB to use MongoDB. Without them, development uses the local JSON file; production refuses to save. The bundled snapshot is not the production database.</p>
+        </dl> : <p className="text-sm text-slate-400">{storageError || 'Loading storage status...'}</p>}
+      </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* Card 1: Admin Credentials */}

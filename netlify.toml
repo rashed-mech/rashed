@@ -3,8 +3,15 @@
   publish = "dist"
   functions = "netlify/functions"
 
+[build.environment]
+  NODE_VERSION = "22"
+  NPM_FLAGS = "--include=dev"
+  # The isolated MongoDB server is a test dependency, never needed for builds.
+  MONGOMS_DISABLE_POSTINSTALL = "true"
+
 [functions]
   node_bundler = "esbuild"
+  external_node_modules = ["mongodb"]
 
 # Route all /api/* calls to the bundled Express app (single serverless function).
 # Express handles the actual sub-routing (e.g. /api/health, /api/portfolio, etc.)
