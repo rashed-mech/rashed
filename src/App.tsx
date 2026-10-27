@@ -10,8 +10,10 @@ import { PortfolioData } from './types';
 import { ToastProvider } from './context/ToastContext';
 import portfolioSeedData from '../data/portfolio_db.json';
 import { publicationStats } from './utils/publicationStats';
-const ReferencePortfolio = lazy(() => import('./components/ReferencePortfolio').then(module => ({ default: module.ReferencePortfolio })));
-const OriginalPortfolio = lazy(() => import('./components/OriginalPortfolio').then(module => ({ default: module.OriginalPortfolio })));
+const loadReferencePortfolio = () => import('./components/ReferencePortfolio').then(module => ({ default: module.ReferencePortfolio }));
+const loadOriginalPortfolio = () => import('./components/OriginalPortfolio').then(module => ({ default: module.OriginalPortfolio }));
+const ReferencePortfolio = lazy(loadReferencePortfolio);
+const OriginalPortfolio = lazy(loadOriginalPortfolio);
 
 const AdminLogin = lazy(() => import('./components/admin/AdminLogin').then(module => ({ default: module.AdminLogin })));
 const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard').then(module => ({ default: module.AdminDashboard })));
@@ -19,6 +21,8 @@ const CommandPalette = lazy(() => import('./components/CommandPalette').then(mod
 const adminLoading = <div className="min-h-screen flex items-center justify-center dark:bg-[#0c110f] dark:text-white" role="status">Loading dashboard…</div>;
 
 const PUBLIC_CACHE_KEY = 'portfolio_public_cache_v3';
+// v2: ignores the old 'portfolio_theme' key, which the previous version wrote automatically on every visit.
+const THEME_KEY = 'portfolio_theme_v2';
 
 function withStats(value: PortfolioData): PortfolioData {
   Object.assign(value.profile.stats, publicationStats(value.publications));
@@ -41,6 +45,16 @@ function getInitialPortfolioData(): PortfolioData {
   return withStats(structuredClone(portfolioSeedData) as unknown as PortfolioData);
 }
 
+// Start downloading the page's main chunk right now, in parallel with React starting up,
+// instead of waiting for the first render to ask for it (which left a blank screen).
+(() => {
+  let design: string | undefined;
+  try { design = JSON.parse(localStorage.getItem(PUBLIC_CACHE_KEY) || 'null')?.themeUX?.activeDesign; } catch { /* ignore */ }
+  design ??= (portfolioSeedData as any).themeUX?.activeDesign;
+  if (window.location.pathname.startsWith('/admin')) return;
+  void (design === 'design-7' ? loadReferencePortfolio() : loadOriginalPortfolio());
+})();
+
 function savePublicCache(value: PortfolioData) {
   try { localStorage.setItem(PUBLIC_CACHE_KEY, JSON.stringify(value)); } catch { /* storage full or blocked: ignore */ }
 }
@@ -60,18 +74,14 @@ export function App() {
   const [commandPaletteOpen, setCommandPaletteOpen] = useState<boolean>(false);
   const [darkMode, setDarkMode] = useState<boolean>(() => {
     try {
-      const saved = localStorage.getItem('portfolio_theme');
-      if (saved) return saved === 'dark';
+      // Only an explicit choice made with the theme toggle is stored; everyone else gets light mode.
+      return localStorage.getItem(THEME_KEY) === 'dark';
     } catch (e) {}
-    return true; // Default to modern dark mode
+    return false; // Default to light mode
   });
   const activeDesign = data.themeUX?.activeDesign || 'design-5';
 
   useEffect(() => {
-    try {
-      localStorage.setItem('portfolio_theme', darkMode ? 'dark' : 'light');
-    } catch (e) {}
-
     if (darkMode && (route === 'admin' || activeDesign !== 'design-7')) {
       document.documentElement.classList.add('dark');
     } else {
@@ -79,7 +89,11 @@ export function App() {
     }
   }, [darkMode, route, activeDesign]);
 
-  const toggleDarkMode = () => setDarkMode(prev => !prev);
+  const toggleDarkMode = () => setDarkMode(prev => {
+    const next = !prev;
+    try { localStorage.setItem(THEME_KEY, next ? 'dark' : 'light'); } catch (e) {}
+    return next;
+  });
 
   // Load portfolio data
   const pendingLoad = useRef<Promise<void> | null>(null);

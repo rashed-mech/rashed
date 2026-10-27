@@ -1,14 +1,14 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en">
   <head>
     <script>
       (function() {
         try {
-          var saved = localStorage.getItem('portfolio_theme');
-          var cached = JSON.parse(localStorage.getItem('portfolio_data_cache_v2') || '{}');
+          var saved = localStorage.getItem('portfolio_theme_v2');
+          var cached = JSON.parse(localStorage.getItem('portfolio_public_cache_v3') || '{}');
           var design = cached.themeUX && cached.themeUX.activeDesign || 'design-5';
           var isReference = design === 'design-7' && !window.location.pathname.startsWith('/admin');
-          var isDark = !isReference && (saved !== null ? saved === 'dark' : true);
+          var isDark = !isReference && saved === 'dark';
           if (isDark) {
             document.documentElement.classList.add('dark');
             document.documentElement.style.backgroundColor = '#080d14';
@@ -27,7 +27,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="128x128" href="/favicon.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <meta name="theme-color" content="#080d14" />
+    <meta name="theme-color" content="#f3f5ef" />
     <!-- Above-the-fold images: fetch immediately instead of after the JS bundle runs -->
     <link rel="preload" as="image" href="/avatar.webp" type="image/webp" fetchpriority="high" />
     <link rel="preload" as="image" href="/logo-circle.webp" type="image/webp" />
