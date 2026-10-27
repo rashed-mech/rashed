@@ -18,22 +18,37 @@ const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard').th
 const CommandPalette = lazy(() => import('./components/CommandPalette').then(module => ({ default: module.CommandPalette })));
 const adminLoading = <div className="min-h-screen flex items-center justify-center dark:bg-[#0c110f] dark:text-white" role="status">Loading dashboard…</div>;
 
+const PUBLIC_CACHE_KEY = 'portfolio_public_cache_v3';
+
+function withStats(value: PortfolioData): PortfolioData {
+  Object.assign(value.profile.stats, publicationStats(value.publications));
+  return value;
+}
+
 function getInitialPortfolioData(): PortfolioData {
   try {
-    // Purge outdated v1 cache that might contain old demo data
+    // Purge outdated caches that might contain old demo data
     localStorage.removeItem('portfolio_data_cache_v1');
     localStorage.removeItem('portfolio_data_cache_v2');
+    // Public data from the visitor's last visit: lets returning visitors see the page instantly.
+    const cached = JSON.parse(localStorage.getItem(PUBLIC_CACHE_KEY) || 'null');
+    if (cached && cached.profile && Array.isArray(cached.publications) && Array.isArray(cached.projects)) {
+      return withStats(cached as PortfolioData);
+    }
   } catch (e) {
     console.warn('Failed to read portfolio cache from localStorage', e);
   }
-  const seed = structuredClone(portfolioSeedData) as unknown as PortfolioData;
-  Object.assign(seed.profile.stats, publicationStats(seed.publications));
-  return seed;
+  return withStats(structuredClone(portfolioSeedData) as unknown as PortfolioData);
+}
+
+function savePublicCache(value: PortfolioData) {
+  try { localStorage.setItem(PUBLIC_CACHE_KEY, JSON.stringify(value)); } catch { /* storage full or blocked: ignore */ }
 }
 
 export function App() {
   const [data, setData] = useState<PortfolioData>(() => getInitialPortfolioData());
-  const [loading, setLoading] = useState<boolean>(true);
+  // The page renders immediately from the cached or bundled copy; fresh data swaps in quietly.
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   // True once the API has answered at least once. A later background refresh that
   // fails must not put a warning banner on a page that is already showing fine.
@@ -100,6 +115,7 @@ export function App() {
           }
         }
         setData(prev => JSON.stringify(prev) === JSON.stringify(publicData) ? prev : publicData!);
+        savePublicCache(publicData);
         setIsAuth(false);
         hasLoadedOnce.current = true;
         setError(null);
@@ -116,13 +132,6 @@ export function App() {
     pendingLoad.current = request;
     void request.finally(() => { if (pendingLoad.current === request) pendingLoad.current = null; });
     return request;
-  }, []);
-
-  // Never leave the visitor on the spinner for more than a few seconds. The bundled
-  // snapshot is already in state, so show it while the API wakes up.
-  useEffect(() => {
-    const timer = window.setTimeout(() => setLoading(false), 3500);
-    return () => window.clearTimeout(timer);
   }, []);
 
   useEffect(() => {
