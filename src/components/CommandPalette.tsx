@@ -88,8 +88,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   const handleDownloadCV = async () => {
     showToast('Generating official academic CV (PDF)...', 'info');
     try {
-      const { downloadCV } = await import('../utils/generateCV');
-      await downloadCV(data);
+      const { downloadPortfolioCV } = await import('../utils/downloadCV');
+      await downloadPortfolioCV(data);
       showToast('CV downloaded successfully!', 'success');
     } catch (err: any) {
       showToast('Failed to generate CV: ' + (err.message || ''), 'error');

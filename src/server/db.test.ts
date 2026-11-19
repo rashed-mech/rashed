@@ -215,6 +215,40 @@ test('saved data refreshes across instances and citation totals persist consiste
         const removePdf = await fetch(`${base}/api/admin/research-resume`, {method:'DELETE',headers});
         assert.equal(removePdf.status, 200);
         assert.equal((await fetch(`${base}/api/research-resume`)).status, 404);
+        // CV PDF: served by Download CV only while the admin switch is on.
+        assert.equal((await fetch(`${base}/api/admin/cv-pdf`)).status, 401);
+        assert.equal((await fetch(`${base}/api/admin/cv-pdf/enabled`, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({enabled:true})})).status, 401);
+        assert.equal((await fetch(`${base}/api/cv-pdf`)).status, 404, 'No uploaded CV by default');
+        const cvPdf = Buffer.concat([Buffer.from('%PDF-1.4\n% CV download test\n'), Buffer.from([1,2,250]), Buffer.from('\n%%EOF\n')]);
+        const cvUpload = await fetch(`${base}/api/admin/cv-pdf`, {method:'PUT', headers, body:JSON.stringify({fileName:'CV_Owner.pdf', dataBase64:cvPdf.toString('base64')})});
+        assert.equal(cvUpload.status, 200);
+        const cvSaved = (await cvUpload.json()).data;
+        assert.equal(cvSaved.enabled, false, 'Uploading does not switch the download over by itself');
+        assert.equal(cvSaved.file.fileName, 'CV_Owner.pdf');
+        assert.equal('dataBase64' in cvSaved.file, false);
+        assert.equal((await fetch(`${base}/api/cv-pdf`)).status, 404, 'Switch off: visitors get the generated CV');
+        let publicCv = (await (await fetch(`${base}/api/portfolio`)).json()).data;
+        assert.equal(publicCv.cvPdfEnabled, false);
+        assert.equal('dataBase64' in publicCv.cvPdf, false, 'Public JSON must not carry the CV PDF');
+        const adminCopy = await fetch(`${base}/api/admin/cv-pdf/file`, {headers});
+        assert.deepEqual(Buffer.from(await adminCopy.arrayBuffer()), cvPdf, 'Admin can download the saved file while the switch is off');
+        assert.equal((await fetch(`${base}/api/admin/cv-pdf/enabled`, {method:'PUT', headers, body:JSON.stringify({enabled:'yes'})})).status, 400);
+        const switchedOn = await fetch(`${base}/api/admin/cv-pdf/enabled`, {method:'PUT', headers, body:JSON.stringify({enabled:true})});
+        assert.equal((await switchedOn.json()).data.enabled, true);
+        publicCv = (await (await fetch(`${base}/api/portfolio`)).json()).data;
+        assert.equal(publicCv.cvPdfEnabled, true);
+        const cvDownload = await fetch(`${base}/api/cv-pdf`);
+        assert.equal(cvDownload.headers.get('content-type'), 'application/pdf');
+        assert.match(cvDownload.headers.get('content-disposition')!, /filename="CV_Owner\.pdf"/);
+        assert.deepEqual(Buffer.from(await cvDownload.arrayBuffer()), cvPdf);
+        await restarted.refresh();
+        assert.equal(restarted.getActiveCvPdf()?.dataBase64, cvPdf.toString('base64'), 'CV PDF and switch persist after a fresh read');
+        await fetch(`${base}/api/admin/cv-pdf/enabled`, {method:'PUT', headers, body:JSON.stringify({enabled:false})});
+        assert.equal((await fetch(`${base}/api/cv-pdf`)).status, 404, 'Switching off returns to the generated CV');
+        await fetch(`${base}/api/admin/cv-pdf/enabled`, {method:'PUT', headers, body:JSON.stringify({enabled:true})});
+        const cvRemoved = await fetch(`${base}/api/admin/cv-pdf`, {method:'DELETE', headers});
+        assert.deepEqual((await cvRemoved.json()).data, {file:null, enabled:false}, 'Removing the PDF turns the switch off');
+        assert.equal((await fetch(`${base}/api/cv-pdf`)).status, 404);
         const addedResponse = await fetch(`${base}/api/admin/publications`, {
           method: 'POST', headers, body: JSON.stringify({title:'Conference awaiting review', authors:'Owner', category:'Conference', publicationStatus:'Under Review', year:2026, abstract:'', tags:[]}),
         });

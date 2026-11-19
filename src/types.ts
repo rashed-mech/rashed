@@ -282,6 +282,10 @@ export interface ResearchResume {
 
 export interface PortfolioData {
   researchResume?: ResearchResume | null;
+  /** Uploaded CV PDF. Visitors get it from Download CV only while cvPdfEnabled is on. */
+  cvPdf?: ResearchResume | null;
+  /** On: Download CV serves the uploaded PDF. Off (or no upload): the CV is generated from portfolio content. */
+  cvPdfEnabled?: boolean;
   profile: Profile;
   themeUX?: ThemeUXConfig;
   sectionConfig?: SectionConfig;

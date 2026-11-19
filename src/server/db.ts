@@ -174,7 +174,7 @@ export class PortfolioDatabase {
   }
 
   public getPublicData(): Omit<PortfolioData, 'messages' | 'adminConfig'> {
-    const { messages, adminConfig, profile, researchResume, ...rest } = this.data;
+    const { messages, adminConfig, profile, researchResume, cvPdf, ...rest } = this.data;
     const publicProfile = { ...profile };
     if (publicProfile.logoUrl === 'chunked') {
       publicProfile.logoUrl = '';
@@ -185,7 +185,7 @@ export class PortfolioDatabase {
     if (publicProfile.avatarUrl && publicProfile.avatarUrl.startsWith('data:')) {
       publicProfile.avatarUrl = '/api/portfolio/avatar';
     }
-    return { ...rest, profile: publicProfile, researchResume:resumeMetadata(researchResume) };
+    return { ...rest, profile: publicProfile, researchResume:resumeMetadata(researchResume), cvPdf:resumeMetadata(cvPdf), cvPdfEnabled:Boolean(this.data.cvPdfEnabled && cvPdf?.dataBase64) };
   }
 
   public getResearchResume(): ResearchResume | null {
@@ -196,6 +196,33 @@ export class PortfolioDatabase {
     this.data.researchResume = resume;
     this.sync();
     return resumeMetadata(resume);
+  }
+
+  public getCvPdf(): ResearchResume | null {
+    return this.data.cvPdf || null;
+  }
+
+  /** The uploaded CV PDF, only while the admin switch is on. */
+  public getActiveCvPdf(): ResearchResume | null {
+    return this.data.cvPdfEnabled && this.data.cvPdf?.dataBase64 ? this.data.cvPdf : null;
+  }
+
+  public getCvPdfSettings() {
+    return { file: resumeMetadata(this.data.cvPdf), enabled: Boolean(this.data.cvPdfEnabled) };
+  }
+
+  public saveCvPdf(file: ResearchResume | null) {
+    this.data.cvPdf = file;
+    // Removing the file turns the switch off so Download CV falls back to the generated CV.
+    if (!file) this.data.cvPdfEnabled = false;
+    this.sync();
+    return this.getCvPdfSettings();
+  }
+
+  public setCvPdfEnabled(enabled: boolean) {
+    this.data.cvPdfEnabled = enabled;
+    this.sync();
+    return this.getCvPdfSettings();
   }
 
   public updateProfile(updatedProfile: Partial<PortfolioData['profile']>): PortfolioData['profile'] {

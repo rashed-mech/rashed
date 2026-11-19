@@ -22,6 +22,32 @@ export async function deleteResearchResumePDF(): Promise<void> {
   if (!response.ok || !result.success) throw new Error(result.message || 'Could not remove the PDF');
 }
 
+export interface CvPdfSettings {
+  file: ResearchResume | null;
+  enabled: boolean;
+}
+
+async function cvPdfRequest(path: string, init: RequestInit | undefined, failure: string): Promise<CvPdfSettings> {
+  const response = await authFetch(`${API_BASE}/admin/cv-pdf${path}`, init);
+  const result = await response.json();
+  if (!response.ok || !result.success) throw new Error(result.message || failure);
+  return result.data;
+}
+
+export const fetchCvPdfSettings = () => cvPdfRequest('', undefined, 'Could not load the CV PDF settings');
+export const saveCvPdf = (fileName: string, dataBase64: string) =>
+  cvPdfRequest('', {method:'PUT', body:JSON.stringify({fileName, dataBase64})}, 'Could not save the CV PDF');
+export const deleteCvPdf = () => cvPdfRequest('', {method:'DELETE'}, 'Could not remove the CV PDF');
+export const setCvPdfEnabled = (enabled: boolean) =>
+  cvPdfRequest('/enabled', {method:'PUT', body:JSON.stringify({enabled})}, 'Could not change the CV download setting');
+
+/** The saved CV PDF for the admin, whether or not the switch is on. */
+export async function fetchSavedCvPdf(): Promise<Blob> {
+  const response = await authFetch(`${API_BASE}/admin/cv-pdf/file`, {cache:'no-store'});
+  if (!response.ok) throw new Error('The saved PDF could not be downloaded.');
+  return response.blob();
+}
+
 export interface AdminStorageDetails {
   type: string;
   location: string;

@@ -50,7 +50,7 @@ export function ResearchResumeUploader({ onRefresh, showToast }: {onRefresh:()=>
 
   return <section className="p-6 rounded-2xl bg-slate-800/90 border border-slate-700/80 space-y-4" aria-labelledby="research-resume-upload-title">
     <h3 id="research-resume-upload-title" className="text-base font-bold text-white flex items-center gap-2"><FileText className="w-5 h-5 text-indigo-400" />Research Resume PDF</h3>
-    <p className="text-xs text-slate-400">Upload the PDF visitors download with the homepage Research Resume button. Download CV continues to generate your CV automatically.</p>
+    <p className="text-xs text-slate-400">Upload the PDF visitors download with the homepage Research Resume button. Download CV is set separately in the CV PDF panel above.</p>
     {loading ? <p className="text-sm text-slate-400">Loading saved resume...</p> : saved ? <div className="space-y-2">
       <p className="text-sm text-slate-200 break-all">{saved.fileName} <span className="text-xs text-slate-400">({Math.ceil(saved.size / 1024)} KB)</span></p>
       <div className="flex flex-wrap gap-4">
