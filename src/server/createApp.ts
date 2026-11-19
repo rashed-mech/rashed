@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 import { randomBytes } from 'crypto';
 import * as cheerio from 'cheerio';
 import { db as defaultDb, PortfolioDatabase } from './db.ts';
-import type { Publication } from '../types';
+import type { Publication, ResearchResume } from '../types';
 import { PUBLICATION_STATUSES, getPublicationStatus } from '../utils/publicationStatus';
 import { MongoStorageError } from './mongoStore';
 import { validateResearchResume, resumeMetadata } from './researchResume';
@@ -117,16 +117,25 @@ export async function createApp(db: PortfolioDatabase = defaultDb, scholarLoader
   });
 
   // --- Public APIs ---
-  app.get('/api/research-resume', (_req: Request, res: Response) => {
-    const resume = db.getResearchResume();
-    if (!resume?.dataBase64) return res.status(404).json({success:false, message:'The research resume is not available yet.'});
-    const filename = resume.fileName.replace(/[^a-zA-Z0-9._-]/g, '_');
-    const encodedFilename = encodeURIComponent(resume.fileName).replace(/['()*]/g, character => `%${character.charCodeAt(0).toString(16).toUpperCase()}`);
+  const sendPdf = (res: Response, file: ResearchResume) => {
+    const filename = file.fileName.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const encodedFilename = encodeURIComponent(file.fileName).replace(/['()*]/g, character => `%${character.charCodeAt(0).toString(16).toUpperCase()}`);
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"; filename*=UTF-8''${encodedFilename}`);
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('X-Content-Type-Options', 'nosniff');
-    res.send(Buffer.from(resume.dataBase64, 'base64'));
+    res.send(Buffer.from(file.dataBase64!, 'base64'));
+  };
+  app.get('/api/research-resume', (_req: Request, res: Response) => {
+    const resume = db.getResearchResume();
+    if (!resume?.dataBase64) return res.status(404).json({success:false, message:'The research resume is not available yet.'});
+    sendPdf(res, resume);
+  });
+  // Uploaded CV PDF; 404 while the admin switch is off so visitors get the generated CV.
+  app.get('/api/cv-pdf', (_req: Request, res: Response) => {
+    const file = db.getActiveCvPdf();
+    if (!file) return res.status(404).json({success:false, message:'No uploaded CV is active.'});
+    sendPdf(res, file);
   });
 
   app.get('/api/health', (req: Request, res: Response) => {
@@ -412,6 +421,31 @@ export async function createApp(db: PortfolioDatabase = defaultDb, scholarLoader
   app.delete('/api/admin/research-resume', verifyAuth, (_req: Request, res: Response) => {
     db.saveResearchResume(null);
     res.json({success:true, data:null});
+  });
+
+  app.get('/api/admin/cv-pdf', verifyAuth, (_req: Request, res: Response) => {
+    res.json({success:true, data:db.getCvPdfSettings()});
+  });
+  // Admin-only preview of the saved file, whether or not the switch is on.
+  app.get('/api/admin/cv-pdf/file', verifyAuth, (_req: Request, res: Response) => {
+    const file = db.getCvPdf();
+    if (!file?.dataBase64) return res.status(404).json({success:false, message:'No CV PDF has been uploaded.'});
+    sendPdf(res, file);
+  });
+  app.put('/api/admin/cv-pdf', verifyAuth, (req: Request, res: Response) => {
+    try {
+      const file = validateResearchResume(req.body);
+      res.json({success:true, data:db.saveCvPdf(file)});
+    } catch (error: any) {
+      res.status(400).json({success:false, message:error.message});
+    }
+  });
+  app.put('/api/admin/cv-pdf/enabled', verifyAuth, (req: Request, res: Response) => {
+    if (typeof req.body?.enabled !== 'boolean') return res.status(400).json({success:false, message:'Send enabled as true or false.'});
+    res.json({success:true, data:db.setCvPdfEnabled(req.body.enabled)});
+  });
+  app.delete('/api/admin/cv-pdf', verifyAuth, (_req: Request, res: Response) => {
+    res.json({success:true, data:db.saveCvPdf(null)});
   });
 
   app.get('/api/admin/storage', verifyAuth, (_req: Request, res: Response) => {

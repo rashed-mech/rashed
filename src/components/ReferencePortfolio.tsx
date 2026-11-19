@@ -131,7 +131,7 @@ export function ReferencePortfolio({ data, onSearch, onAdmin, isAdmin }: { data:
   const closeWork = () => { setSelectedWork(null); requestAnimationFrame(() => lastWorkTrigger.current?.focus()); };
   const downloadCV = async () => {
     setCvBusy(true); setCvError('');
-    try { await (await import('../utils/generateCV')).downloadCV(data); }
+    try { await (await import('../utils/downloadCV')).downloadPortfolioCV(data); }
     catch { setCvError('The CV could not be generated. Please try again.'); }
     finally { setCvBusy(false); }
   };

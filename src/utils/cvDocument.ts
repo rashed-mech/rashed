@@ -231,7 +231,8 @@ export function buildCVDocument(data: PortfolioData, siteUrl: string, fit: CVFit
   if (publications.length) {
     const ordered = publications;
     content.push(
-      ...section('Journal Publications/Under Peer-Review'),
+      // The count follows the publications list, so it updates as papers are added or removed.
+      ...section(`Journal Publications/Under Peer-Review [${publications.length} in total]`),
       bullets(ordered.map(pub => {
         if (getPublicationStatus(pub) !== 'Published') {
           return item(['[', { text: `${getPublicationStatus(pub)} · ${getPublicationType(pub) === 'Review' ? 'Review Paper' : getPublicationType(pub)}`, italics: true }, ']- ', link(clean(pub.title), pub.link || undefined)]);

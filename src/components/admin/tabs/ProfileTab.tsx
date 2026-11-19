@@ -4,6 +4,7 @@ import { Profile } from '../../../types';
 import { updateProfileAPI } from '../../../api';
 import { formatImageUrl } from '../../../utils/formatUrl';
 import { ResearchResumeUploader } from '../ResearchResumeUploader';
+import { CvPdfUploader } from '../CvPdfUploader';
 
 interface ProfileTabProps {
   profile: Profile;
@@ -95,6 +96,7 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({ profile, onRefresh, show
         </button>
       </div>
 
+      <CvPdfUploader onRefresh={onRefresh} showToast={showToast} />
       <ResearchResumeUploader onRefresh={onRefresh} showToast={showToast} />
       <form onSubmit={handleSubmit} className="space-y-6">
 

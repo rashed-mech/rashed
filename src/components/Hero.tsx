@@ -152,8 +152,8 @@ export const Hero: React.FC<HeroProps> = ({ profile, data, activeDesign = 'curre
     setCvBusy(true);
     setCvError('');
     try {
-      const { downloadCV } = await import('../utils/generateCV');
-      await downloadCV(data);
+      const { downloadPortfolioCV } = await import('../utils/downloadCV');
+      await downloadPortfolioCV(data);
     } catch {
       setCvError('The CV could not be downloaded. Please try again.');
     } finally {
