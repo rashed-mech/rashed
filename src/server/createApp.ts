@@ -3,12 +3,12 @@ import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import fs from 'fs';
 import jwt from 'jsonwebtoken';
-import { randomBytes } from 'crypto';
 import * as cheerio from 'cheerio';
 import { db as defaultDb, PortfolioDatabase } from './db.ts';
 import type { Publication, ResearchResume } from '../types';
 import { PUBLICATION_STATUSES, getPublicationStatus } from '../utils/publicationStatus';
 import { MongoStorageError } from './mongoStore';
+import { resolveJwtSecret } from './jwtSecret';
 import { validateResearchResume, resumeMetadata } from './researchResume';
 import { 
   parseBibTeX, 
@@ -22,14 +22,10 @@ import {
 // many short-lived instances that do NOT share memory), so admin logins
 // stay valid instead of randomly failing with "session expired" when a
 // request lands on a different instance than the one that issued it.
-const configuredJwtSecret = process.env.JWT_SECRET?.trim();
-if (process.env.NODE_ENV === 'production' && (!configuredJwtSecret || configuredJwtSecret.length < 32)) {
-  throw new Error('JWT_SECRET must be configured with at least 32 characters in production.');
+const { secret: JWT_SECRET, source: jwtSecretSource } = resolveJwtSecret();
+if (jwtSecretSource === 'MONGODB_URI') {
+  console.warn('[auth] JWT_SECRET is not set (or shorter than 32 characters); signing admin tokens with a key derived from MONGODB_URI. Set JWT_SECRET in the host settings.');
 }
-// A fresh secret keeps local development usable without a predictable signing key.
-const JWT_SECRET = configuredJwtSecret && configuredJwtSecret.length >= 32
-  ? configuredJwtSecret
-  : randomBytes(32).toString('hex');
 
 function generateToken(username: string): string {
   return jwt.sign({ username }, JWT_SECRET, { expiresIn: '7d' });

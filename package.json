@@ -13,7 +13,7 @@
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",
-    "test": "tsx --test src/server/db.test.ts src/server/adminEnvironment.test.ts src/server/mongoStore.test.ts src/utils/activeSection.test.ts",
+    "test": "tsx --test src/server/jwtSecret.test.ts src/server/db.test.ts src/server/adminEnvironment.test.ts src/server/mongoStore.test.ts src/utils/activeSection.test.ts",
     "db:migrate": "tsx scripts/migrate-mongodb.ts",
     "db:check": "tsx scripts/check-mongodb.ts",
     "build:netlify": "vite build && node scripts/build-netlify.mjs",
